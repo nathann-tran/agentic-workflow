@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "generated_from": "registries/harnesses.json",
+  "parity_policy": "capability-aware; never assume equivalent enforcement",
+  "adapters": {
+    "opencode": {
+      "agent_files": "~/.config/opencode/agents/awm/*.md",
+      "builder_scope": "partial-exact-edit-paths",
+      "shell_policy": "ask",
+      "worker_enforcement": "read-only permission rules",
+      "nested_delegation": "native; configure depth"
+    },
+    "claude-code": {
+      "agent_files": "~/.claude/agents/awm-*.md",
+      "builder_scope": "Write/Edit pre-tool hook; shell side effects remain",
+      "shell_policy": "Human approval and isolated worktree",
+      "worker_enforcement": "Read/Grep/Glob tool allowlist plus best-effort path hook; broad searches blocked",
+      "nested_delegation": "native; configure depth"
+    },
+    "codex-cli": {
+      "agent_files": "~/.codex/agents/awm_*.toml",
+      "builder_scope": "unsupported per-file; separate approved writable session",
+      "shell_policy": "inherits parent sandbox and approvals",
+      "worker_enforcement": "degraded; inherited sandbox and prompt contract",
+      "nested_delegation": "not assumed; Conductor-mediated fallback"
+    },
+    "omp": {
+      "agent_files": "~/.omp/agent/agents/awm-*.md",
+      "builder_scope": "unsupported per-file; isolated worktree and approval",
+      "shell_policy": "Human approval",
+      "worker_enforcement": "native tool allowlist",
+      "nested_delegation": "native spawns and depth controls"
+    }
+  }
+}

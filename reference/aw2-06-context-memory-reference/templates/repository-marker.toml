@@ -1,0 +1,4 @@
+# Safe fallback when the installed hook client does not discover a parent marker.
+# Place this file at the Git repository root.
+workspace = "product-example"
+project_strategy = "repo-root"

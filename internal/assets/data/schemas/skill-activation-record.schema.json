@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentic-workflow.dev/schemas/skill-activation-record.schema.json",
+  "title": "Skill Activation Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "workflow_id",
+    "task_id",
+    "agent_role",
+    "canonical_skill_id",
+    "activation_level",
+    "status"
+  ],
+  "properties": {
+    "workflow_id": {
+      "type": "string"
+    },
+    "task_id": {
+      "type": "string"
+    },
+    "agent_role": {
+      "enum": [
+        "conductor",
+        "plan",
+        "scout",
+        "architect",
+        "builder",
+        "worker"
+      ]
+    },
+    "canonical_skill_id": {
+      "type": "string"
+    },
+    "runtime_skill_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "activation_level": {
+      "enum": [
+        "required",
+        "conditional",
+        "explicit",
+        "blocked"
+      ]
+    },
+    "trigger": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "enum": [
+        "loaded",
+        "not_available",
+        "denied",
+        "not_triggered",
+        "blocked_by_core"
+      ]
+    },
+    "failure_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

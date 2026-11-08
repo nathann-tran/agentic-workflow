@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentic-workflow.dev/schemas/workflow-state.schema.json",
+  "title": "Agentic Workflow State",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "workspace_id",
+    "project_id",
+    "repository_id",
+    "workflow_id",
+    "status",
+    "current_phase",
+    "phase_status",
+    "approvals",
+    "open_decisions",
+    "artifact_refs",
+    "adapter_bindings",
+    "next_action"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "workspace_id": {
+      "type": "string"
+    },
+    "project_id": {
+      "type": "string"
+    },
+    "repository_id": {
+      "type": "string"
+    },
+    "workflow_id": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "planned",
+        "in_progress",
+        "blocked",
+        "paused",
+        "complete",
+        "cancelled"
+      ]
+    },
+    "current_phase": {
+      "enum": [
+        "intake",
+        "plan",
+        "scout",
+        "architect",
+        "builder",
+        "review",
+        "complete"
+      ]
+    },
+    "phase_status": {
+      "type": "object",
+      "additionalProperties": {
+        "enum": [
+          "not_started",
+          "in_progress",
+          "pending_approval",
+          "approved",
+          "revision_requested",
+          "blocked",
+          "skipped_with_approval",
+          "complete"
+        ]
+      }
+    },
+    "approvals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "phase",
+          "decision",
+          "approved_by",
+          "timestamp"
+        ],
+        "properties": {
+          "phase": {
+            "type": "string"
+          },
+          "decision": {
+            "enum": [
+              "approved",
+              "revision_requested",
+              "paused",
+              "rejected"
+            ]
+          },
+          "approved_by": {
+            "const": "human"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "open_decisions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "artifact_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "adapter_bindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "harness_id",
+          "native_session_id"
+        ],
+        "properties": {
+          "harness_id": {
+            "type": "string"
+          },
+          "native_session_id": {
+            "type": "string"
+          },
+          "agent_instance_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "last_seen": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "next_action": {
+      "type": "string"
+    },
+    "updated_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+schema_version: "1.0"
+workspace_id: product-example
+project_id: api-service
+repository_id: git:example/api-service
+workflow_id: wf-2026-0001
+task_id: task-2026-0001-architect
+agent_role: architect
+status: complete
+summary: "Design prepared. The endpoint uses an idempotency record and transaction boundary."
+evidence:
+  - reference: src/payments/payment-service.ts:40-88
+    kind: source
+    claim: "Existing payment creation already uses a transaction boundary."
+    revision: 0123456789abcdef
+artifacts:
+  - path_or_uri: docs/agentic-workflow/architecture/wf-2026-0001.md
+    kind: architecture
+    status: draft
+decisions_required: []
+risks: ["Existing clients may retry requests without an idempotency key."]
+assumptions: []
+activated_skills: [codebase_design]
+skill_failures: []
+memory_candidates: []
+next_action: human_approval
+confidence: high

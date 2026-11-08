@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentic-workflow.dev/schemas/adapter-manifest.schema.json",
+  "title": "Harness Adapter Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "adapter_id",
+    "adapter_version",
+    "core_version",
+    "harness_name",
+    "tested_versions",
+    "capabilities",
+    "delegation",
+    "skill_sources",
+    "memory_integration",
+    "known_limits",
+    "conformance_tests"
+  ],
+  "properties": {
+    "adapter_id": {
+      "type": "string"
+    },
+    "adapter_version": {
+      "type": "string"
+    },
+    "core_version": {
+      "type": "string"
+    },
+    "harness_name": {
+      "type": "string"
+    },
+    "tested_versions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "verified_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "level",
+          "verification",
+          "enforcement",
+          "evidence"
+        ],
+        "properties": {
+          "level": {
+            "enum": [
+              "native",
+              "adapter",
+              "degraded",
+              "unsupported",
+              "unverified"
+            ]
+          },
+          "verification": {
+            "enum": [
+              "documented",
+              "locally_tested",
+              "not_tested"
+            ]
+          },
+          "enforcement": {
+            "enum": [
+              "native_enforced",
+              "adapter_enforced",
+              "external_enforced",
+              "prompt_only"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "delegation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_depth",
+        "worker_direct_spawn",
+        "worker_can_spawn",
+        "broker_fallback"
+      ],
+      "properties": {
+        "max_depth": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "worker_direct_spawn": {
+          "type": "boolean"
+        },
+        "worker_can_spawn": {
+          "type": "boolean"
+        },
+        "broker_fallback": {
+          "type": "boolean"
+        }
+      }
+    },
+    "skill_sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "memory_integration": {
+      "enum": [
+        "mcp_and_hooks",
+        "mcp_only",
+        "hooks_only",
+        "managed",
+        "unsupported",
+        "unverified"
+      ]
+    },
+    "known_limits": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "conformance_tests": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

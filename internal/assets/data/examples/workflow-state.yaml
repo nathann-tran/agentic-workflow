@@ -1,0 +1,35 @@
+schema_version: "1.0"
+workspace_id: product-example
+project_id: api-service
+repository_id: git:example/api-service
+workflow_id: wf-2026-0001
+status: in_progress
+current_phase: architect
+phase_status:
+  intake: approved
+  plan: approved
+  scout: approved
+  architect: pending_approval
+  builder: not_started
+  review: not_started
+  complete: not_started
+approvals:
+  - phase: plan
+    decision: approved
+    approved_by: human
+    timestamp: "2026-11-08T10:00:00Z"
+  - phase: scout
+    decision: approved
+    approved_by: human
+    timestamp: "2026-11-08T10:30:00Z"
+open_decisions: []
+artifact_refs:
+  - docs/agentic-workflow/plans/wf-2026-0001.md
+  - docs/agentic-workflow/scout/wf-2026-0001.md
+adapter_bindings:
+  - harness_id: opencode
+    native_session_id: session-example
+    agent_instance_id: architect-01
+    last_seen: "2026-11-08T11:00:00Z"
+next_action: "Present the architecture gate to Human."
+updated_at: "2026-11-08T11:00:00Z"

@@ -1,0 +1,53 @@
+{
+  "version": "1.0",
+  "plugins": [
+    {
+      "id": "superpowers",
+      "purpose": "Engineering workflow skills",
+      "markers": [
+        "~/.config/opencode/plugins/superpowers",
+        "~/.claude/plugins/cache/superpowers",
+        "~/.omp/plugins/node_modules/superpowers"
+      ],
+      "required": false,
+      "install_policy": "manual",
+      "note": "Load using-superpowers and task-specific skills in each child session."
+    },
+    {
+      "id": "ponytail",
+      "purpose": "Code minimality and maintainability review",
+      "markers": [
+        "~/.config/opencode/plugins/ponytail*",
+        "~/.cache/opencode/npm/@dietrichgebert/ponytail*",
+        "~/.omp/agent/extensions/ponytail",
+        "~/.omp/plugins/node_modules/@dietrichgebert/ponytail"
+      ],
+      "required": false,
+      "install_policy": "manual",
+      "note": "Use the Core minimality policy when unavailable."
+    },
+    {
+      "id": "ai-memory",
+      "purpose": "Persistent cross-session and cross-project memory",
+      "markers": [
+        "~/.config/opencode/plugins/ai-memory-opencode2.ts",
+        "~/.claude/plugins/ai-memory",
+        "~/.omp/agent/extensions/ai-memory*"
+      ],
+      "required": false,
+      "install_policy": "manual",
+      "note": "AWM only inspects and prepares configuration. It does not change live memory settings without approval."
+    },
+    {
+      "id": "understand-anything",
+      "purpose": "Repository knowledge graph",
+      "markers": [
+        "~/.understand-anything-plugin",
+        "~/.understand-anything/repo/understand-anything-plugin"
+      ],
+      "required": false,
+      "install_policy": "manual",
+      "note": "Scout owns graph freshness. Verify important claims against source code."
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+# Proposed safe initial settings. Review against the installed ai-memory version.
+[auto_improve]
+require_approval = true
+
+[auto_improve.scheduler]
+enabled = false

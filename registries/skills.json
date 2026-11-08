@@ -1,0 +1,765 @@
+{
+  "version": "1.0",
+  "policy": {
+    "never_install_unpinned_remote_sources": true,
+    "require_human_selection": true,
+    "check_skill_md": true,
+    "do_not_overwrite_existing": true
+  },
+  "bundled": [
+    {
+      "id": "awm-workflow-protocol",
+      "name": "AWM Workflow Protocol",
+      "description": "Use the AWM contracts, role boundaries, routing rules, and approval gates.",
+      "roles": [
+        "conductor",
+        "plan",
+        "scout",
+        "architect",
+        "builder",
+        "worker"
+      ],
+      "required": true,
+      "path": "skills/awm-workflow-protocol",
+      "version": "0.2.0",
+      "dependencies": [],
+      "compatibility": [
+        "opencode",
+        "claude-code",
+        "codex-cli",
+        "omp"
+      ]
+    },
+    {
+      "id": "awm-clear-communication",
+      "name": "AWM Clear Communication",
+      "description": "Write short, clear, evidence-preserving technical communication.",
+      "roles": [
+        "conductor",
+        "plan",
+        "scout",
+        "architect",
+        "builder",
+        "worker"
+      ],
+      "required": true,
+      "path": "skills/awm-clear-communication",
+      "version": "0.2.0",
+      "dependencies": [],
+      "compatibility": [
+        "opencode",
+        "claude-code",
+        "codex-cli",
+        "omp"
+      ]
+    },
+    {
+      "id": "awm-sdd-tdd",
+      "name": "AWM Spec and Test Driven Development",
+      "description": "Apply approved specifications before implementation and tests before changes.",
+      "roles": [
+        "plan",
+        "architect",
+        "builder"
+      ],
+      "required": true,
+      "path": "skills/awm-sdd-tdd",
+      "version": "0.2.0",
+      "dependencies": [],
+      "compatibility": [
+        "opencode",
+        "claude-code",
+        "codex-cli",
+        "omp"
+      ]
+    },
+    {
+      "id": "awm-minimality",
+      "name": "AWM Engineering Minimality",
+      "description": "Prefer the smallest correct implementation without removing safety or quality.",
+      "roles": [
+        "architect",
+        "builder"
+      ],
+      "required": true,
+      "path": "skills/awm-minimality",
+      "version": "0.2.0",
+      "dependencies": [],
+      "compatibility": [
+        "opencode",
+        "claude-code",
+        "codex-cli",
+        "omp"
+      ]
+    }
+  ],
+  "external": [
+    {
+      "id": "brainstorming",
+      "canonical_id": "brainstorming",
+      "roles": [
+        "plan",
+        "architect"
+      ],
+      "activation": "conditional",
+      "source": "obra/superpowers",
+      "ref": "",
+      "installable": false,
+      "reason": "The available source snapshot does not contain a full immutable commit.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "using-superpowers",
+      "canonical_id": "superpowers_bootstrap",
+      "roles": [
+        "all"
+      ],
+      "activation": "conditional",
+      "source": "obra/superpowers",
+      "ref": "",
+      "installable": false,
+      "reason": "The available source snapshot does not contain a full immutable commit.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "verification-before-completion",
+      "canonical_id": "verify_before_completion",
+      "roles": [
+        "all"
+      ],
+      "activation": "required",
+      "source": "obra/superpowers",
+      "ref": "",
+      "installable": false,
+      "reason": "The available source snapshot does not contain a full immutable commit.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "test-driven-development",
+      "canonical_id": "tdd_workflow",
+      "roles": [
+        "builder"
+      ],
+      "activation": "required",
+      "source": "obra/superpowers",
+      "ref": "",
+      "installable": false,
+      "reason": "The available source snapshot does not contain a full immutable commit.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "implement",
+      "canonical_id": "implement_workflow",
+      "roles": [
+        "builder"
+      ],
+      "activation": "explicit",
+      "source": "mattpocock/skills",
+      "ref": "",
+      "installable": false,
+      "reason": "The available source snapshot does not contain a full immutable commit.",
+      "dependencies": [
+        "tdd",
+        "code-review"
+      ],
+      "compatibility": []
+    },
+    {
+      "id": "tdd",
+      "canonical_id": "tdd_guidance",
+      "roles": [
+        "builder"
+      ],
+      "activation": "required",
+      "source": "global-skill",
+      "ref": "",
+      "installable": false,
+      "reason": "This is a user-local skill. AWM will not replace it with an unknown source.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "ponytail",
+      "canonical_id": "ponytail_minimality",
+      "roles": [
+        "builder"
+      ],
+      "activation": "required",
+      "source": "dietrichgebert/ponytail",
+      "ref": "",
+      "installable": false,
+      "reason": "Ponytail is supplied by a separate plugin. AWM does not install plugins implicitly.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "grill-me",
+      "canonical_id": "grill_me",
+      "roles": [
+        "plan"
+      ],
+      "activation": "explicit",
+      "source": "mattpocock/skills",
+      "ref": "",
+      "installable": false,
+      "reason": "The available source snapshot does not contain a full immutable commit.",
+      "dependencies": [
+        "grilling"
+      ],
+      "compatibility": []
+    },
+    {
+      "id": "grill-with-docs",
+      "canonical_id": "grill_with_docs",
+      "roles": [
+        "plan"
+      ],
+      "activation": "explicit",
+      "source": "mattpocock/skills",
+      "ref": "",
+      "installable": false,
+      "reason": "The available source snapshot does not contain a full immutable commit.",
+      "dependencies": [
+        "grilling",
+        "domain-modeling"
+      ],
+      "compatibility": []
+    },
+    {
+      "id": "grilling",
+      "canonical_id": "grilling",
+      "roles": [
+        "plan"
+      ],
+      "activation": "conditional",
+      "source": "mattpocock/skills",
+      "ref": "",
+      "installable": false,
+      "reason": "The available source snapshot does not contain a full immutable commit.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "domain-modeling",
+      "canonical_id": "domain_modeling",
+      "roles": [
+        "plan",
+        "architect"
+      ],
+      "activation": "conditional",
+      "source": "global-skill",
+      "ref": "",
+      "installable": false,
+      "reason": "This is a user-local skill. AWM will not replace it with an unknown source.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "understand",
+      "canonical_id": "understand_codebase",
+      "roles": [
+        "scout"
+      ],
+      "activation": "conditional",
+      "source": "understand-anything",
+      "ref": "",
+      "installable": false,
+      "reason": "Install and validate Understand Anything through its own trusted installer.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "codebase-design",
+      "canonical_id": "codebase_design",
+      "roles": [
+        "architect"
+      ],
+      "activation": "required",
+      "source": "global-skill",
+      "ref": "",
+      "installable": false,
+      "reason": "This is a user-local skill. AWM will not replace it with an unknown source.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "archify",
+      "canonical_id": "archify",
+      "roles": [
+        "architect",
+        "conductor"
+      ],
+      "activation": "conditional",
+      "source": "global-skill",
+      "ref": "",
+      "installable": false,
+      "reason": "This is a user-local skill. AWM will not replace it with an unknown source.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "ponytail-review",
+      "canonical_id": "ponytail_review",
+      "roles": [
+        "builder"
+      ],
+      "activation": "conditional",
+      "source": "dietrichgebert/ponytail",
+      "ref": "",
+      "installable": false,
+      "reason": "Provided by a separate plugin. AWM does not install plugins implicitly.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "writing-plans",
+      "canonical_id": "writing_plans",
+      "roles": [
+        "plan"
+      ],
+      "activation": "conditional",
+      "source": "superpowers",
+      "ref": "",
+      "installable": false,
+      "reason": "Provided by a separate plugin. AWM does not install plugins implicitly.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "to-spec",
+      "canonical_id": "to_spec",
+      "roles": [
+        "plan"
+      ],
+      "activation": "explicit",
+      "source": "mattpocock/skills",
+      "ref": "",
+      "installable": false,
+      "reason": "No immutable upstream source pin is included in this release. Install through a trusted source and review it.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "to-tickets",
+      "canonical_id": "to_tickets",
+      "roles": [
+        "plan",
+        "conductor"
+      ],
+      "activation": "explicit",
+      "source": "mattpocock/skills",
+      "ref": "",
+      "installable": false,
+      "reason": "No immutable upstream source pin is included in this release. Install through a trusted source and review it.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "to-questionnaire",
+      "canonical_id": "to_questionnaire",
+      "roles": [
+        "plan"
+      ],
+      "activation": "explicit",
+      "source": "mattpocock/skills",
+      "ref": "",
+      "installable": false,
+      "reason": "No immutable upstream source pin is included in this release. Install through a trusted source and review it.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "understand-chat",
+      "canonical_id": "understand_chat",
+      "roles": [
+        "conductor",
+        "plan",
+        "scout",
+        "architect",
+        "builder"
+      ],
+      "activation": "conditional",
+      "source": "understand-anything",
+      "ref": "",
+      "installable": false,
+      "reason": "Use the trusted Understand Anything installation. AWM does not replace its plugin or skills.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "understand-diff",
+      "canonical_id": "understand_diff",
+      "roles": [
+        "scout"
+      ],
+      "activation": "conditional",
+      "source": "understand-anything",
+      "ref": "",
+      "installable": false,
+      "reason": "Use the trusted Understand Anything installation. AWM does not replace its plugin or skills.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "understand-explain",
+      "canonical_id": "understand_explain",
+      "roles": [
+        "scout",
+        "architect",
+        "builder"
+      ],
+      "activation": "conditional",
+      "source": "understand-anything",
+      "ref": "",
+      "installable": false,
+      "reason": "Use the trusted Understand Anything installation. AWM does not replace its plugin or skills.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "markdown-mermaid-writing",
+      "canonical_id": "markdown_mermaid",
+      "roles": [
+        "plan",
+        "scout",
+        "architect",
+        "conductor"
+      ],
+      "activation": "conditional",
+      "source": "global-skill",
+      "ref": "",
+      "installable": false,
+      "reason": "User-managed local skill. AWM does not download or replace it.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "prototype",
+      "canonical_id": "prototype",
+      "roles": [
+        "architect"
+      ],
+      "activation": "conditional",
+      "source": "global-skill",
+      "ref": "",
+      "installable": false,
+      "reason": "User-managed local skill. AWM does not download or replace it.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "systematic-debugging",
+      "canonical_id": "systematic_debugging",
+      "roles": [
+        "scout",
+        "builder"
+      ],
+      "activation": "conditional",
+      "source": "superpowers",
+      "ref": "",
+      "installable": false,
+      "reason": "Provided by a separate plugin. AWM does not install plugins implicitly.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "diagnosing-bugs",
+      "canonical_id": "diagnosing_bugs",
+      "roles": [
+        "scout",
+        "builder"
+      ],
+      "activation": "conditional",
+      "source": "global-skill",
+      "ref": "",
+      "installable": false,
+      "reason": "User-managed local skill. AWM does not download or replace it.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "research",
+      "canonical_id": "research",
+      "roles": [
+        "scout",
+        "worker"
+      ],
+      "activation": "conditional",
+      "source": "global-skill",
+      "ref": "",
+      "installable": false,
+      "reason": "User-managed local skill. AWM does not download or replace it.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "research-lookup",
+      "canonical_id": "research_lookup",
+      "roles": [
+        "scout",
+        "worker"
+      ],
+      "activation": "conditional",
+      "source": "global-skill",
+      "ref": "",
+      "installable": false,
+      "reason": "User-managed local skill. AWM does not download or replace it.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "exa-search",
+      "canonical_id": "exa_search",
+      "roles": [
+        "scout",
+        "worker"
+      ],
+      "activation": "conditional",
+      "source": "global-skill",
+      "ref": "",
+      "installable": false,
+      "reason": "User-managed local skill. AWM does not download or replace it.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "parallel-web",
+      "canonical_id": "parallel_web",
+      "roles": [
+        "scout",
+        "worker"
+      ],
+      "activation": "conditional",
+      "source": "global-skill",
+      "ref": "",
+      "installable": false,
+      "reason": "User-managed local skill. AWM does not download or replace it.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "find-skills",
+      "canonical_id": "find_skills",
+      "roles": [
+        "conductor",
+        "plan",
+        "scout"
+      ],
+      "activation": "conditional",
+      "source": "global-skill",
+      "ref": "",
+      "installable": false,
+      "reason": "User-managed local skill. AWM does not download or replace it.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "get-available-resources",
+      "canonical_id": "available_resources",
+      "roles": [
+        "conductor",
+        "worker"
+      ],
+      "activation": "conditional",
+      "source": "global-skill",
+      "ref": "",
+      "installable": false,
+      "reason": "User-managed local skill. AWM does not download or replace it.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "requesting-code-review",
+      "canonical_id": "requesting_code_review",
+      "roles": [
+        "builder"
+      ],
+      "activation": "conditional",
+      "source": "superpowers",
+      "ref": "",
+      "installable": false,
+      "reason": "Provided by a separate plugin. AWM does not install plugins implicitly.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "receiving-code-review",
+      "canonical_id": "receiving_code_review",
+      "roles": [
+        "builder"
+      ],
+      "activation": "conditional",
+      "source": "superpowers",
+      "ref": "",
+      "installable": false,
+      "reason": "Provided by a separate plugin. AWM does not install plugins implicitly.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "code-review",
+      "canonical_id": "code_review_parallel",
+      "roles": [
+        "builder"
+      ],
+      "activation": "blocked",
+      "source": "global-skill",
+      "ref": "",
+      "installable": false,
+      "reason": "Blocked by AWM Core policy. Use the Conductor and Worker delegation contract instead.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "implement-spec",
+      "canonical_id": "implement_spec_parallel",
+      "roles": [
+        "builder"
+      ],
+      "activation": "blocked",
+      "source": "mattpocock/skills",
+      "ref": "",
+      "installable": false,
+      "reason": "Blocked by AWM Core policy. Use the Conductor and Worker delegation contract instead.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "setup-pre-commit",
+      "canonical_id": "setup_pre_commit",
+      "roles": [
+        "builder"
+      ],
+      "activation": "conditional",
+      "source": "global-skill",
+      "ref": "",
+      "installable": false,
+      "reason": "User-managed local skill. AWM does not download or replace it.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "understand-domain",
+      "canonical_id": "understand_domain",
+      "roles": [
+        "plan",
+        "scout",
+        "architect"
+      ],
+      "activation": "conditional",
+      "source": "understand-anything",
+      "ref": "",
+      "installable": false,
+      "reason": "Use the trusted Understand Anything installation. AWM does not replace its plugin or skills.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "understand-knowledge",
+      "canonical_id": "understand_knowledge",
+      "roles": [
+        "scout"
+      ],
+      "activation": "conditional",
+      "source": "understand-anything",
+      "ref": "",
+      "installable": false,
+      "reason": "Use the trusted Understand Anything installation. AWM does not replace its plugin or skills.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "understand-onboard",
+      "canonical_id": "understand_onboard",
+      "roles": [
+        "scout",
+        "conductor"
+      ],
+      "activation": "conditional",
+      "source": "understand-anything",
+      "ref": "",
+      "installable": false,
+      "reason": "Use the trusted Understand Anything installation. AWM does not replace its plugin or skills.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "improve-codebase-architecture",
+      "canonical_id": "improve_codebase_architecture",
+      "roles": [
+        "architect"
+      ],
+      "activation": "conditional",
+      "source": "global-skill",
+      "ref": "",
+      "installable": false,
+      "reason": "User-managed local skill. AWM does not download or replace it.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "wayfinder",
+      "canonical_id": "wayfinder",
+      "roles": [
+        "conductor",
+        "plan"
+      ],
+      "activation": "conditional",
+      "source": "global-skill",
+      "ref": "",
+      "installable": false,
+      "reason": "User-managed local skill. AWM does not download or replace it.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "loop-me",
+      "canonical_id": "loop_me",
+      "roles": [
+        "conductor",
+        "builder"
+      ],
+      "activation": "explicit",
+      "source": "global-skill",
+      "ref": "",
+      "installable": false,
+      "reason": "User-managed local skill. AWM does not download or replace it.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "writing-for-agents",
+      "canonical_id": "writing_for_agents",
+      "roles": [
+        "conductor",
+        "plan",
+        "architect"
+      ],
+      "activation": "conditional",
+      "source": "global-skill",
+      "ref": "",
+      "installable": false,
+      "reason": "User-managed local skill. AWM does not download or replace it.",
+      "dependencies": [],
+      "compatibility": []
+    },
+    {
+      "id": "humanizer",
+      "canonical_id": "humanizer",
+      "roles": [
+        "all"
+      ],
+      "activation": "conditional",
+      "source": "global-skill",
+      "ref": "",
+      "installable": false,
+      "reason": "User-managed local skill. AWM does not download or replace it.",
+      "dependencies": [],
+      "compatibility": []
+    }
+  ]
+}

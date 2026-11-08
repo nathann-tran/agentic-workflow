@@ -1,0 +1,77 @@
+{
+  "version": "1.0",
+  "harnesses": [
+    {
+      "id": "opencode",
+      "name": "OpenCode",
+      "binary": "opencode",
+      "global_agents": "~/.config/opencode/agents/awm",
+      "skill_paths": ["~/.agents/skills", "~/.config/opencode/skills"],
+      "global_guidance": "",
+      "capabilities": {
+        "custom_agents": "native",
+        "subagent_delegation": "native",
+        "nested_delegation": "native-capability; depth depends on runtime configuration",
+        "read_only_worker": "native-permissions",
+        "builder_exact_write_scope": "partial; edit paths can be constrained, shell requires approval",
+        "skills": "native",
+        "notes": "OpenCode V2 permission syntax uses permissions/action/resource/effect."
+      },
+      "docs": "https://opencode.ai/v2/docs/agents"
+    },
+    {
+      "id": "claude-code",
+      "name": "Claude Code",
+      "binary": "claude",
+      "global_agents": "~/.claude/agents",
+      "skill_paths": ["~/.agents/skills", "~/.claude/skills"],
+      "global_guidance": "~/.claude/CLAUDE.md",
+      "capabilities": {
+        "custom_agents": "native",
+        "subagent_delegation": "native",
+        "nested_delegation": "native; controlled by runtime depth configuration",
+        "read_only_worker": "tool allowlist plus hooks",
+        "builder_exact_write_scope": "partial; file hooks do not constrain arbitrary shell side effects",
+        "skills": "native",
+        "notes": "Global custom agents are stored under ~/.claude/agents."
+      },
+      "docs": "https://code.claude.com/docs/en/sub-agents"
+    },
+    {
+      "id": "codex-cli",
+      "name": "Codex CLI",
+      "binary": "codex",
+      "global_agents": "~/.codex/agents",
+      "skill_paths": ["~/.agents/skills"],
+      "global_guidance": "~/.codex/AGENTS.md",
+      "capabilities": {
+        "custom_agents": "native TOML",
+        "subagent_delegation": "native",
+        "nested_delegation": "not_assumed; Conductor-mediated fallback",
+        "read_only_worker": "degraded; inherits parent sandbox and tool permissions",
+        "builder_exact_write_scope": "unsupported; Builder uses a separate Human-approved writable session and isolated worktree",
+        "skills": "native Agent Skills",
+        "notes": "Custom agents inherit the parent sandbox, approval mode, provider, and MCP servers."
+      },
+      "docs": "https://learn.chatgpt.com/docs/agent-configuration/subagents"
+    },
+    {
+      "id": "omp",
+      "name": "Oh My Pi",
+      "binary": "omp",
+      "global_agents": "~/.omp/agent/agents",
+      "skill_paths": ["~/.omp/agent/skills", "~/.agents/skills"],
+      "global_guidance": "~/.omp/agent/AGENTS.md",
+      "capabilities": {
+        "custom_agents": "native Markdown task agents",
+        "subagent_delegation": "native task tool",
+        "nested_delegation": "native; depth and spawns allowlists must be configured",
+        "read_only_worker": "native tool allowlist",
+        "builder_exact_write_scope": "unsupported by agent frontmatter alone; Builder requires isolated worktree and Human approval",
+        "skills": "native",
+        "notes": "Global agents are discovered under ~/.omp/agent/agents/*.md."
+      },
+      "docs": "https://github.com/can1357/oh-my-pi/blob/main/docs/task-agent-discovery.md"
+    }
+  ]
+}

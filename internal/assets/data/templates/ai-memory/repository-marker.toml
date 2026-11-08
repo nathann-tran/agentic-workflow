@@ -1,0 +1,4 @@
+# Review the workspace ID before committing this file.
+# Use the same workspace ID for repositories in one trust boundary.
+workspace = "product-example"
+project_strategy = "repo-root"

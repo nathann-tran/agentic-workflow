@@ -1,0 +1,9 @@
+# Merge these tables into the effective ai-memory <data_dir>/config.toml.
+# Do not replace the complete config file.
+# Update existing tables instead of adding duplicate TOML tables.
+
+[auto_improve]
+require_approval = true
+
+[auto_improve.scheduler]
+enabled = false

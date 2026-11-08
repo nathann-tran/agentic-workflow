@@ -1,0 +1,44 @@
+schema_version: "1.0"
+workspace_id: product-example
+project_id: api-service
+repository_id: git:example/api-service
+workflow_id: wf-2026-0001
+task_id: task-2026-0001-architect
+parent_task_id: null
+caller_role: conductor
+assignee_role: architect
+objective: Design the approved idempotent payment endpoint.
+task_type: architecture
+scope:
+  include: [src/payments/**, tests/payments/**]
+  exclude: [generated/**, vendor/**]
+  repositories: [api-service]
+  write_allowlist: [docs/agentic-workflow/architecture/]
+constraints:
+  read_only: true
+  source_write_allowed: false
+  network_allowed: false
+  human_approval_required: true
+  max_delegation_depth: 1
+  external_mutation_allowed: false
+context:
+  artifact_refs:
+    - docs/agentic-workflow/plans/wf-2026-0001.md
+    - docs/agentic-workflow/scout/wf-2026-0001.md
+  approved_decision_refs: []
+  memory_queries: ["payment idempotency contract"]
+  source_revision: 0123456789abcdef
+  required_sections: [requirements, findings, constraints]
+skills:
+  required: [codebase_design]
+  conditional: [archify]
+  explicit: []
+expected_result:
+  format: architecture-artifact
+  include: [diagram, interfaces, blast-radius, test-seams, rollback, decisions-required]
+  max_summary_words: 180
+done_when:
+  - Every approved requirement maps to a design element.
+  - Read-only source access is preserved.
+  - The artifact includes evidence and rollback.
+human_instruction: null

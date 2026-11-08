@@ -1,0 +1,19 @@
+schema_version: "1.0"
+decision_id: ADR-EXAMPLE-001
+workflow_id: wf-2026-0001
+title: Require idempotency keys for payment creation
+status: proposed
+context: "Clients can retry payment requests after a network timeout."
+options:
+  - "Require a client-provided idempotency key."
+  - "Infer idempotency from request payloads."
+decision: "Pending Human approval."
+consequences:
+  - "The API contract must define key scope and retention."
+source_refs:
+  - docs/agentic-workflow/architecture/wf-2026-0001.md
+approval:
+  required: true
+  approved_by: pending
+  approved_at: null
+  notes: ""

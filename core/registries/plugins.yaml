@@ -1,0 +1,78 @@
+registry_version: "1.0"
+plugins:
+  - id: superpowers
+    source: obra/superpowers
+    role: engineering_skill_provider
+    status: installed_in_reference_runtime
+    observed_version: "8ca22db"
+    capabilities:
+      - brainstorming
+      - test_driven_development
+      - systematic_debugging
+      - verification_before_completion
+      - code_review_request_and_feedback
+    limits:
+      - "Child sessions do not automatically inherit controller bootstrap context."
+      - "Each session must load required skills explicitly."
+    fallback: "Core policies and equivalent skills."
+
+  - id: ponytail
+    source: https://ponytail.dev
+    role: minimal_implementation_policy_provider
+    status: installed_in_reference_runtime
+    observed_version: "4.10.3"
+    capabilities:
+      - minimality_policy
+      - overengineering_review
+      - deferred_shortcut_ledger
+    default_mode: full
+    fallback: "core/policies/engineering-standards.md"
+
+  - id: ai-memory
+    source: akitaonrails/ai-memory
+    role: persistent_memory_service
+    status: installed_in_reference_runtime
+    integration:
+      mcp_server_id: ai-memory
+      tools_observed: 24
+      local_plugin: "~/.config/opencode/plugins/ai-memory-opencode2.ts"
+    local_observations:
+      capture_mode: denylist
+      capture_assistant_text: false
+      allowlist_code_present_but_inactive: true
+      exclusions_before_enqueue_and_spool: true
+      project_strategy_repo_root: "client-side handling observed; native CLI path unresolved"
+      auto_improve_effective_settings: unknown
+    fallback: "Git-backed workflow state and artifacts."
+
+  - id: understand-anything
+    source: "https://github.com/understand-anything/understand-anything"
+    role: repository_knowledge_service
+    status: installed_in_reference_runtime
+    local_paths:
+      skill: "~/.agents/skills/understand"
+      plugin_root: "~/.understand-anything/repo/understand-anything-plugin"
+      compatibility_symlink: "~/.understand-anything-plugin"
+    capabilities:
+      - repository_knowledge_graph
+      - internal_agent_pool
+      - graph_explanation
+      - graph_diff_analysis
+    internal_agent_files_verified:
+      - project-scanner
+      - file-analyzer
+      - assemble-reviewer
+      - architecture-analyzer
+      - tour-builder
+      - graph-reviewer
+      - article-analyzer
+      - design-analyzer
+      - domain-analyzer
+      - knowledge-graph-guide
+    fallback: "Direct repository inspection with evidence references."
+
+policy:
+  - "Plugins are optional implementations."
+  - "Core policies remain active without plugins."
+  - "Record exact plugin versions and harness coverage per adapter."
+  - "Do not infer child-session behavior from the primary session."

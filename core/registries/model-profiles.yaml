@@ -1,0 +1,32 @@
+registry_version: "1.0"
+profiles:
+  strategic_reasoning:
+    purpose: "Requirements, high-impact decisions, system architecture, orchestration."
+    roles: [conductor, plan, architect]
+    preferred_traits: [strong_reasoning, reliable_instruction_following, long_context]
+    runtime_model_ids: {}
+
+  technical_reasoning:
+    purpose: "Repository investigation, execution tracing, technical evidence."
+    roles: [scout]
+    preferred_traits: [code_understanding, tool_reliability, efficient_context_use]
+    runtime_model_ids: {}
+
+  implementation:
+    purpose: "Production implementation, tests, debugging, self-review."
+    roles: [builder]
+    preferred_traits: [coding_quality, tool_reliability, test_reasoning]
+    runtime_model_ids: {}
+
+  fast_analysis:
+    purpose: "Bounded read-only inspection and concise evidence gathering."
+    roles: [worker]
+    preferred_traits: [low_latency, low_cost, reliable_summarization]
+    runtime_model_ids: {}
+
+rules:
+  - "Core stores logical profile names only."
+  - "Adapters map profiles to provider-specific model IDs."
+  - "Do not hardcode model IDs in canonical agent instructions."
+  - "Record runtime model IDs in adapter-local configuration."
+  - "Model choice does not change role authority or permissions."

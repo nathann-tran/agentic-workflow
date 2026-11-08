@@ -1,0 +1,41 @@
+adapter_id: opencode
+adapter_version: 0.1.0
+core_version: 0.1.0-draft
+harness_name: OpenCode
+tested_versions: ["2.2.6"]
+verified_at: null
+capabilities:
+  custom_agents:
+    level: native
+    verification: locally_tested
+    enforcement: native_enforced
+    evidence: ["User-provided OpenCode 2.2.6 preflight."]
+    limitations: []
+  nested_delegation:
+    level: unverified
+    verification: documented
+    enforcement: adapter_enforced
+    evidence: ["Configured depth is documented. Local nested conformance test is pending."]
+    limitations: ["Do not claim nested delegation until the conformance test passes."]
+  human_approval:
+    level: unverified
+    verification: not_tested
+    enforcement: prompt_only
+    evidence: []
+    limitations: ["The adapter must prove that execution pauses at each gate."]
+  source_write_scope:
+    level: unverified
+    verification: not_tested
+    enforcement: prompt_only
+    evidence: []
+    limitations: ["The adapter must prove Builder write scope and read-only role boundaries."]
+delegation:
+  max_depth: 2
+  worker_direct_spawn: false
+  worker_can_spawn: false
+  broker_fallback: true
+skill_sources: ["~/.agents/skills", "Superpowers", "Ponytail"]
+memory_integration: mcp_and_hooks
+known_limits:
+  - "This is an example manifest. Replace every unverified capability after local tests."
+conformance_tests: []

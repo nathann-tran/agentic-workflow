@@ -1,0 +1,10 @@
+{
+  "version": "1.0",
+  "profiles": {
+    "strategic_reasoning": {"purpose":"Requirements and architecture reasoning","model":"inherit","reasoning":"high"},
+    "technical_reasoning": {"purpose":"Codebase investigation and evidence","model":"inherit","reasoning":"medium"},
+    "implementation": {"purpose":"Implementation and test execution","model":"inherit","reasoning":"high"},
+    "fast_analysis": {"purpose":"Bounded Worker tasks","model":"inherit","reasoning":"low"}
+  },
+  "policy": "AWM does not set provider-specific model IDs. Select models in each harness."
+}

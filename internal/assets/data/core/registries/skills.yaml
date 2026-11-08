@@ -1,0 +1,481 @@
+registry_version: "1.0"
+core_version: "0.1.0"
+source_snapshot:
+  runtime: "OpenCode 2.2.6"
+  captured_at: "2026-11-08"
+  basis: "User-provided runtime skill catalog and explicit-load test"
+
+activation_levels:
+  - required
+  - conditional
+  - explicit
+  - blocked
+
+skills:
+  - canonical_id: brainstorming
+    source: superpowers
+    owners: [plan, architect]
+    activation: required
+    trigger: "New or ambiguous creative work. Do not repeat after approved requirements."
+    opencode:
+      runtime_id: brainstorming
+      status: verified_available
+    other_harnesses: unverified
+
+  - canonical_id: superpowers_bootstrap
+    source: superpowers
+    owners: [all]
+    activation: conditional
+    trigger: "Use when the Superpowers plugin is installed and active in the current session."
+    opencode:
+      runtime_id: using-superpowers
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: verify_before_completion
+    source: superpowers
+    owners: [all]
+    activation: required
+    trigger: "Before every completion claim. The Core verification policy remains required without this skill."
+    opencode:
+      runtime_id: verification-before-completion
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: implement_workflow
+    source: mattpocock/skills
+    owners: [builder]
+    activation: explicit
+    trigger: "Builder receives an approved implementation task with an enforceable write scope."
+    dependencies: [tdd_guidance]
+    opencode:
+      runtime_id: implement
+      status: explicit_load_verified
+    other_harnesses: adapter_mapping_required
+    constraints:
+      - "Its referenced code-review step must map to the Core Worker review contract."
+      - "Do not run its parallel reviewer topology when that conflicts with the Core delegation policy."
+      - "Loading this skill does not grant source-write permission."
+
+  - canonical_id: tdd_workflow
+    source: superpowers
+    owners: [builder]
+    activation: required
+    trigger: "Every feature or bug fix."
+    opencode:
+      runtime_id: test-driven-development
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: tdd_guidance
+    source: global-skill
+    owners: [builder]
+    activation: required
+    trigger: "Supplement the TDD workflow with local test guidance."
+    opencode:
+      runtime_id: tdd
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: ponytail_minimality
+    source: dietrichgebert/ponytail
+    owners: [builder]
+    activation: required
+    trigger: "Every coding task when the Ponytail plugin is available. Use full mode by default."
+    opencode:
+      runtime_id: ponytail
+      status: verified_available
+      plugin_version: "4.10.3"
+    other_harnesses: plugin_or_policy_fallback
+
+  - canonical_id: ponytail_review
+    source: dietrichgebert/ponytail
+    owners: [builder]
+    activation: conditional
+    trigger: "Review changed code for unnecessary abstractions, dependencies, or dead flexibility."
+    opencode:
+      runtime_id: ponytail-review
+      status: verified_available
+      plugin_version: "4.10.3"
+    other_harnesses: policy_fallback
+
+  - canonical_id: grill_me
+    source: mattpocock/skills
+    owners: [plan]
+    activation: explicit
+    trigger: "Human explicitly requests an interview without documentation updates."
+    dependencies: [grilling]
+    opencode:
+      runtime_id: grill-me
+      status: explicit_load_verified
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: grill_with_docs
+    source: mattpocock/skills
+    owners: [plan]
+    activation: explicit
+    trigger: "Human explicitly requests an interview with domain-document updates."
+    dependencies: [grilling, domain_modeling]
+    opencode:
+      runtime_id: grill-with-docs
+      status: explicit_load_verified
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: grilling
+    source: mattpocock/skills
+    owners: [plan]
+    activation: conditional
+    trigger: "Dependency of Grill Me or Grill With Docs."
+    opencode:
+      runtime_id: grilling
+      status: explicit_load_verified
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: domain_modeling
+    source: global-skill
+    owners: [plan, architect]
+    activation: conditional
+    trigger: "Clarify domain terms, invariants, CONTEXT.md, or ADRs."
+    opencode:
+      runtime_id: domain-modeling
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: writing_plans
+    source: superpowers
+    owners: [plan]
+    activation: conditional
+    trigger: "A multi-step implementation plan requires explicit decomposition."
+    opencode:
+      runtime_id: writing-plans
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: to_spec
+    source: mattpocock/skills
+    owners: [plan]
+    activation: explicit
+    trigger: "Human requests specification output and required tracker context is configured."
+    opencode:
+      runtime_id: to-spec
+      status: explicit_load_verified
+    other_harnesses: adapter_mapping_required
+    constraints: [tracker_configuration_required, human_approval_before_publication]
+
+  - canonical_id: to_tickets
+    source: mattpocock/skills
+    owners: [plan, conductor]
+    activation: explicit
+    trigger: "Human requests ticket creation and tracker context is configured."
+    opencode:
+      runtime_id: to-tickets
+      status: explicit_load_verified
+    other_harnesses: adapter_mapping_required
+    constraints: [tracker_configuration_required, human_approval_before_publication]
+
+  - canonical_id: to_questionnaire
+    source: mattpocock/skills
+    owners: [plan]
+    activation: explicit
+    trigger: "Human requests a stakeholder questionnaire."
+    opencode:
+      runtime_id: to-questionnaire
+      status: explicit_load_verified
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: understand_codebase
+    source: understand-anything
+    owners: [scout]
+    activation: conditional
+    trigger: "Refresh or query the repository knowledge graph."
+    requires_plugin_capabilities: [understand_internal_agent_pool]
+    opencode:
+      runtime_id: understand
+      status: verified_available
+    other_harnesses: portable_skill_runtime_mapping_required
+
+  - canonical_id: understand_chat
+    source: understand-anything
+    owners: [conductor, plan, scout, architect, builder]
+    activation: conditional
+    trigger: "Ask questions against a current knowledge graph."
+    opencode:
+      runtime_id: understand-chat
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: understand_diff
+    source: understand-anything
+    owners: [scout]
+    activation: conditional
+    trigger: "Analyze a Git diff or pull request."
+    opencode:
+      runtime_id: understand-diff
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: understand_explain
+    source: understand-anything
+    owners: [scout, architect, builder]
+    activation: conditional
+    trigger: "Explain a specific file, function, or module."
+    opencode:
+      runtime_id: understand-explain
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: understand_domain
+    source: understand-anything
+    owners: [plan, scout, architect]
+    activation: conditional
+    trigger: "Clarify domain entities, relationships, invariants, and domain language from the repository graph."
+    opencode:
+      runtime_id: understand-domain
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: understand_knowledge
+    source: understand-anything
+    owners: [scout]
+    activation: conditional
+    trigger: "Query or update a Karpathy-pattern repository knowledge wiki when one exists."
+    opencode:
+      runtime_id: understand-knowledge
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: understand_onboard
+    source: understand-anything
+    owners: [scout, conductor]
+    activation: conditional
+    trigger: "Create or refresh a repository onboarding tour for a new contributor."
+    opencode:
+      runtime_id: understand-onboard
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: codebase_design
+    source: global-skill
+    owners: [architect]
+    activation: required
+    trigger: "Design or improve module interfaces, boundaries, seams, or testability."
+    opencode:
+      runtime_id: codebase-design
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: archify
+    source: global-skill
+    owners: [architect, conductor]
+    activation: conditional
+    trigger: "Create a complex architecture, workflow, sequence, or lifecycle visualization."
+    opencode:
+      runtime_id: archify
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: markdown_mermaid
+    source: global-skill
+    owners: [plan, scout, architect, conductor]
+    activation: conditional
+    trigger: "Create source-controlled Markdown diagrams."
+    opencode:
+      runtime_id: markdown-mermaid-writing
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: prototype
+    source: global-skill
+    owners: [architect]
+    activation: conditional
+    trigger: "Answer one bounded design question with throwaway code."
+    opencode:
+      runtime_id: prototype
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+    constraints: [throwaway_only, never_promote_without_builder_review]
+
+  - canonical_id: systematic_debugging
+    source: superpowers
+    owners: [scout, builder]
+    activation: conditional
+    trigger: "A bug, test failure, or unexpected behavior requires diagnosis."
+    opencode:
+      runtime_id: systematic-debugging
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: diagnosing_bugs
+    source: global-skill
+    owners: [scout, builder]
+    activation: conditional
+    trigger: "Diagnose difficult bugs or performance regressions."
+    opencode:
+      runtime_id: diagnosing-bugs
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: research
+    source: global-skill
+    owners: [scout, worker]
+    activation: conditional
+    trigger: "Research a technical question with primary sources."
+    opencode:
+      runtime_id: research
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: research_lookup
+    source: global-skill
+    owners: [scout, worker]
+    activation: conditional
+    trigger: "Gather scholarly or technical evidence when requested."
+    opencode:
+      runtime_id: research-lookup
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: exa_search
+    source: global-skill
+    owners: [scout, worker]
+    activation: conditional
+    trigger: "Search or extract technical web content with Exa."
+    opencode:
+      runtime_id: exa-search
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: parallel_web
+    source: global-skill
+    owners: [scout, worker]
+    activation: conditional
+    trigger: "Use Parallel for current web research or extraction."
+    opencode:
+      runtime_id: parallel-web
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: find_skills
+    source: global-skill
+    owners: [conductor, plan, scout]
+    activation: conditional
+    trigger: "Discover a skill for a task or capability gap."
+    opencode:
+      runtime_id: find-skills
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: available_resources
+    source: global-skill
+    owners: [conductor, worker]
+    activation: conditional
+    trigger: "Inspect host resources before a resource-sensitive task."
+    opencode:
+      runtime_id: get-available-resources
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: requesting_code_review
+    source: superpowers
+    owners: [builder]
+    activation: conditional
+    trigger: "Request a review for a significant change or before merge."
+    opencode:
+      runtime_id: requesting-code-review
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: receiving_code_review
+    source: superpowers
+    owners: [builder]
+    activation: conditional
+    trigger: "Evaluate review feedback before changing code."
+    opencode:
+      runtime_id: receiving-code-review
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: code_review_parallel
+    source: global-skill
+    owners: [builder]
+    activation: blocked
+    trigger: "Default workflow blocks the skill's own parallel reviewer topology."
+    opencode:
+      runtime_id: code-review
+      status: available_but_blocked_by_core
+    constraints: [use_conductor_worker_review_contract_instead]
+
+  - canonical_id: implement_spec_parallel
+    source: mattpocock/skills
+    owners: [builder]
+    activation: blocked
+    trigger: "Default workflow blocks independent implementer and merger agents."
+    opencode:
+      runtime_id: implement-spec
+      status: explicit_load_verified_but_blocked_by_core
+
+  - canonical_id: setup_pre_commit
+    source: global-skill
+    owners: [builder]
+    activation: conditional
+    trigger: "Human approves changes to repository hooks or dependencies."
+    opencode:
+      runtime_id: setup-pre-commit
+      status: verified_available
+    constraints: [human_approval_required]
+
+  - canonical_id: improve_codebase_architecture
+    source: global-skill
+    owners: [architect]
+    activation: conditional
+    trigger: "Evaluate an existing codebase architecture before proposing targeted improvements."
+    opencode:
+      runtime_id: improve-codebase-architecture
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: wayfinder
+    source: global-skill
+    owners: [conductor, plan]
+    activation: conditional
+    trigger: "Choose a suitable workflow entry point or sequence when task routing is unclear."
+    opencode:
+      runtime_id: wayfinder
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: loop_me
+    source: global-skill
+    owners: [conductor, builder]
+    activation: explicit
+    trigger: "Human explicitly requests repeated progress checks or a bounded execution loop."
+    opencode:
+      runtime_id: loop-me
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: writing_for_agents
+    source: global-skill
+    owners: [conductor, plan, architect]
+    activation: conditional
+    trigger: "Write or revise agent prompts, skill instructions, or agent-facing documentation."
+    opencode:
+      runtime_id: writing-for-agents
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+  - canonical_id: humanizer
+    source: global-skill
+    owners: [all]
+    activation: conditional
+    trigger: "Review user-facing prose when naturalness matters and the skill is available."
+    opencode:
+      runtime_id: humanizer
+      status: verified_available
+    other_harnesses: adapter_mapping_required
+
+notes:
+  - "Only OpenCode runtime IDs are recorded from the supplied local catalog."
+  - "Other harness mappings require exact-ID verification in each adapter."
+  - "An unavailable plugin never disables the equivalent Core policy."
+

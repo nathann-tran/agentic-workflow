@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "workspace_id": "product-example",
+  "project_id": "repository-api",
+  "repository_id": "example-api",
+  "workflow_id": "workflow-example-001",
+  "task_id": "TASK-001",
+  "parent_task_id": null,
+  "caller_role": "conductor",
+  "assignee_role": "builder",
+  "objective": "Add the approved health endpoint and its tests.",
+  "task_type": "implementation",
+  "scope": {
+    "include": ["src/health", "tests/health"],
+    "exclude": ["deployment", "secrets"],
+    "repositories": ["repository-api"],
+    "write_allowlist": ["src/health/handler.go", "src/health/handler_test.go"]
+  },
+  "constraints": {
+    "read_only": false,
+    "source_write_allowed": true,
+    "network_allowed": false,
+    "human_approval_required": true,
+    "max_delegation_depth": 1,
+    "external_mutation_allowed": false
+  },
+  "context": {
+    "artifact_refs": ["docs/approved-spec.md"],
+    "approved_decision_refs": ["ADR-001"],
+    "memory_queries": ["health endpoint conventions"],
+    "source_revision": null,
+    "required_sections": ["implementation report", "test evidence"]
+  },
+  "skills": {
+    "required": ["tdd"],
+    "conditional": ["diagnosing-bugs"],
+    "explicit": ["implement"]
+  },
+  "expected_result": {
+    "format": "markdown",
+    "include": ["changed files", "tests", "risks"],
+    "max_summary_words": 150
+  },
+  "done_when": [
+    "The handler matches the approved specification.",
+    "The failing test passes after implementation.",
+    "Relevant regression tests pass."
+  ],
+  "human_instruction": "Use the approved isolated worktree."
+}

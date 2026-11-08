@@ -1,0 +1,66 @@
+registry_version: "1.0"
+release_version: "0.2.0"
+reference_runtime:
+  harness_id: opencode
+  version_observed: "2.2.6"
+  evidence: user_reported_local_runtime
+
+targets:
+  opencode:
+    display_name: OpenCode V2
+    target_status: supported_adapter
+    adapter_status: implemented
+    local_preflight: user_confirmed_prior_agent_install
+    adapter_validation: static_generation_and_permission_review_passed
+    native_runtime_conformance: pending_human_test
+    capabilities:
+      custom_agents: native
+      nested_delegation: supported_with_runtime_depth_configuration
+      builder_exact_write_scope: partial; shell_side_effects_remain
+      grep_path_filter: not_supported_by_permission_resource_matcher
+      memory_integration: ai-memory_opencode_plugin_path_checked
+
+  claude_code:
+    display_name: Claude Code
+    target_status: supported_adapter
+    adapter_status: implemented
+    documentation_reviewed: true
+    adapter_validation: static_yaml_and_hook_tests_passed
+    native_runtime_conformance: pending_human_test
+    capabilities:
+      custom_agents: native
+      nested_delegation: supported_by_native_agent_tool
+      builder_exact_write_scope: write_edit_hooks; shell_side_effects_remain
+      worktree_isolation: native
+
+  codex_cli:
+    display_name: Codex CLI
+    target_status: supported_adapter_with_builder_fallback
+    adapter_status: implemented
+    documentation_reviewed: true
+    adapter_validation: static_toml_generation_passed
+    native_runtime_conformance: pending_human_test
+    capabilities:
+      custom_agents: native_toml
+      nested_delegation: conductor_mediated_fallback
+      builder_exact_write_scope: unavailable_per_agent; separate_approved_session_required
+      sandbox: inherited_from_parent
+
+  omp:
+    display_name: Oh My Pi
+    target_status: supported_adapter_with_builder_fallback
+    adapter_status: implemented
+    documentation_reviewed: true
+    adapter_validation: static_yaml_generation_passed
+    native_runtime_conformance: pending_human_test
+    capabilities:
+      custom_agents: native_markdown
+      nested_delegation: native_with_spawn_allowlist_and_depth_configuration
+      builder_exact_write_scope: unavailable_in_agent_frontmatter; separate_approved_session_required
+      worker_tool_allowlist: native
+
+rules:
+  - "Implemented adapter does not mean native runtime conformance is complete."
+  - "Documented capability does not mean local enforcement was verified."
+  - "Do not mark a capability verified without a runtime test or local evidence."
+  - "Recheck native documentation and permissions after harness upgrades."

@@ -1,0 +1,4 @@
+# Place at the root of a product/client/team/personal trust boundary.
+# Ancestor discovery must be verified for the installed hook client first.
+workspace = "product-example"
+project_strategy = "repo-root"

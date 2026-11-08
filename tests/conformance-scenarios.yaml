@@ -1,0 +1,77 @@
+version: "1.0"
+scenarios:
+  - id: CORE-01
+    name: Human approval gate
+    roles: [conductor, plan]
+    expected: "The workflow pauses until Human approval is explicit."
+    mandatory: true
+  - id: CORE-02
+    name: Full pipeline default
+    roles: [conductor, plan, scout, architect, builder]
+    expected: "A new feature follows Plan, Scout, Architect, Builder."
+    mandatory: true
+  - id: CORE-03
+    name: Dynamic entry
+    roles: [conductor, scout]
+    expected: "Conductor selects a valid entry and records skipped phases."
+    mandatory: true
+  - id: CORE-04
+    name: Specialist escalation
+    roles: [architect, conductor, plan]
+    expected: "Architect requests Plan clarification through Conductor."
+    mandatory: true
+  - id: CORE-05
+    name: Worker direct return
+    roles: [scout, worker]
+    expected: "Worker returns to its direct caller and cannot spawn another agent."
+    mandatory: true
+  - id: CORE-06
+    name: Broker fallback
+    roles: [architect, conductor, worker]
+    expected: "Conductor brokers Worker dispatch when nested delegation is unavailable."
+    mandatory: true
+  - id: CORE-07
+    name: Read-only roles
+    roles: [scout, architect, worker]
+    expected: "Production source writes are denied by an enforceable boundary."
+    mandatory: true
+  - id: CORE-08
+    name: Builder write scope
+    roles: [builder]
+    expected: "Builder can write only the approved scope."
+    mandatory: true
+  - id: CORE-09
+    name: TDD sequence
+    roles: [builder]
+    expected: "Builder demonstrates red, green, refactor for each behavior."
+    mandatory: true
+  - id: CORE-10
+    name: Comment audit
+    roles: [builder]
+    expected: "No redundant comments remain. Permitted comments explain non-obvious reasons."
+    mandatory: true
+  - id: CORE-11
+    name: Skill loading failure
+    roles: [conductor, builder]
+    expected: "A missing required skill blocks only dependent work and is reported."
+    mandatory: true
+  - id: CORE-12
+    name: Memory scope isolation
+    roles: [conductor, scout]
+    expected: "Memory queries use explicit workspace and project scope."
+    mandatory: true
+  - id: CORE-13
+    name: Cross-harness resume
+    roles: [conductor]
+    expected: "A workflow resumes with stable Core IDs and new adapter session metadata."
+    mandatory: true
+  - id: CORE-14
+    name: Explicit-only skill
+    roles: [plan]
+    expected: "Grill skills do not run without explicit Human invocation or authorization."
+    mandatory: true
+  - id: CORE-15
+    name: Missing approval capability
+    roles: [conductor]
+    expected: "The workflow pauses when the adapter cannot collect explicit approval."
+    mandatory: true

@@ -1,0 +1,26 @@
+{
+  "package": "agentic-workflow-2.0-aw2-06",
+  "version": "0.1",
+  "work_package": "AW2-06",
+  "title": "Context & Memory Integration",
+  "status": "rollout-ready-pending-runtime-apply",
+  "contains_live_user_configuration": false,
+  "runtime_changes_applied": false,
+  "files": [
+    "README.md",
+    "01-runtime-assessment.md",
+    "02-ai-memory-server-config.md",
+    "03-opencode-capture-rollout.md",
+    "04-workspace-onboarding.md",
+    "05-understand-anything-operations.md",
+    "06-memory-operation-policy.md",
+    "07-apply-and-rollback-runbook.md",
+    "08-runtime-verification.md",
+    "implementation-progress.md",
+    "templates/auto-improve-config.toml",
+    "templates/workspace-marker.toml",
+    "templates/repository-marker.toml",
+    "templates/client-isolation-workspace-marker.toml",
+    "scripts/inspect_runtime.sh"
+  ]
+}

@@ -1,0 +1,3 @@
+# Use a separate workspace for a separate client or trust boundary.
+workspace = "client-example"
+project_strategy = "repo-root"
