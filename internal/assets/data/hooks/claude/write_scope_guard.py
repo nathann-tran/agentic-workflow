@@ -72,10 +72,10 @@ def main():
             fail("Base Builder cannot write. Generate a task-scoped Builder after Human approval.")
         else:
             roots = {
-                "conductor": [".agentic-workflow/state", ".agentic-workflow/decisions", ".agentic-workflow/manifest.json"],
+                "conductor": [".agentic-workflow/state", ".agentic-workflow/decisions", ".agentic-workflow/manifest.json", "docs/artifacts"],
                 "plan": ["memory/active/plans", ".agentic-workflow/active/plans"],
                 "scout": ["memory/active/explorations", ".agentic-workflow/active/explorations", ".ua"],
-                "architect": ["memory/active/designs", ".agentic-workflow/active/designs"],
+                "architect": ["memory/active/designs", ".agentic-workflow/active/designs", "docs/artifacts"],
             }.get(args.role)
             if roots is None:
                 fail(f"No approved output roots exist for role {args.role!r}.")

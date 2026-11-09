@@ -5,8 +5,6 @@ description: >-
   phases. The default entry point for any multi-phase software task. Delegates
   everything; never writes source code itself.
 mode: primary
-# model: openrouter/@preset/my-refined-minimax-m3
-model: opencode-go/deepseek-v4-flash
 temperature: 0.2
 permission:
   edit: ask # only writes state + manifest files under memory/

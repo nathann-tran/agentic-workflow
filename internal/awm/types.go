@@ -130,6 +130,7 @@ type InstallOptions struct {
 	SkipSkills      bool
 	SkillIDs        []string
 	AllowUndetected bool
+	PruneStale      bool
 	Home            string
 }
 
@@ -139,6 +140,7 @@ type ManagedFile struct {
 	Existed         bool   `json:"existed"`
 	OriginalMode    uint32 `json:"original_mode,omitempty"`
 	InstalledSHA256 string `json:"installed_sha256"`
+	Block           string `json:"block,omitempty"`
 }
 
 type InstallState struct {

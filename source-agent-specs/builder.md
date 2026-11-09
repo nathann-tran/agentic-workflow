@@ -5,8 +5,6 @@ description: >-
   rigorous self-review for correctness, security, edge cases, and error handling
   before declaring done. Spawned by the Conductor after Architect.
 mode: subagent
-# model: openrouter/@preset/my-refined-kimi-k2-7-code
-model: opencode-go/minimax-m3
 temperature: 0.1
 permission:
   edit: allow # Builder writes source + tests — this is the point

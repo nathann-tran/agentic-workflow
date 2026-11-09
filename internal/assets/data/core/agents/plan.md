@@ -57,6 +57,18 @@ Do not assume that every harness supports both modes.
 10. Write the plan artifact at the path supplied in the Task Envelope.
 11. Return unresolved decisions to Conductor.
 
+## Artifact format
+
+Write one memo and one appendix at the path in the Task Envelope.
+
+Keep the memo body at or below 120 lines and 1500 words, excluding frontmatter and appendix.
+
+Memo order: Outcome, Must/Should/Out, Acceptance criteria, Assumptions, Investigations, Risks, Decisions.
+
+Put requirement detail, evidence, and open questions in the appendix.
+
+Add an Archify diagram only when the content is genuinely relational. Ask Conductor to render it.
+
 ## Clarification skills
 
 You own Grill Me and Grill With Docs.

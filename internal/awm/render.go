@@ -56,6 +56,7 @@ func runtimeContract(home, role, harness string) string {
 		"`"+filepath.Join(coreRoot, "policies", "global-principles.md")+"`",
 		"`"+filepath.Join(coreRoot, "policies", "communication.md")+"`",
 		"`"+filepath.Join(coreRoot, "policies", "human-approval.md")+"`",
+		"`"+filepath.Join(coreRoot, "policies", "artifact-selection.md")+"`",
 	)
 	return fmt.Sprintf(`## AWM Runtime Contract
 
@@ -75,7 +76,7 @@ Use short, clear sentences. Express one main idea per sentence. Preserve evidenc
 
 For English, follow Simplified Technical English principles where practical. For Vietnamese, use equivalent clear-language rules. Do not claim formal ASD-STE100 compliance.
 
-Choose diagrams or interactive artifacts only when they improve understanding. Do not replace useful evidence with visual decoration.
+Every role writes a gate memo under the artifact contract in artifact-selection.md. Every Architect design carries a validated Archify diagram; Conductor blocks the gate without a passing finalize receipt.
 
 This role runs in the %s adapter. The current role is %s.
 `, strings.Join(references, ", "), harness, role)
@@ -149,6 +150,7 @@ func openCodeRules(role, home string) []permissionRule {
 			permissionRule{Action: "edit", Resource: ".agentic-workflow/state/**", Effect: "allow"},
 			permissionRule{Action: "edit", Resource: ".agentic-workflow/decisions/**", Effect: "allow"},
 			permissionRule{Action: "edit", Resource: ".agentic-workflow/manifest.json", Effect: "allow"},
+			permissionRule{Action: "edit", Resource: "docs/artifacts/**", Effect: "allow"},
 			permissionRule{Action: "subagent", Resource: "*", Effect: "deny"},
 			permissionRule{Action: "subagent", Resource: "awm/plan", Effect: "allow"},
 			permissionRule{Action: "subagent", Resource: "awm/scout", Effect: "allow"},
@@ -180,6 +182,7 @@ func openCodeRules(role, home string) []permissionRule {
 		return append(allowRead, editAll,
 			permissionRule{Action: "edit", Resource: "memory/active/designs/**", Effect: "allow"},
 			permissionRule{Action: "edit", Resource: ".agentic-workflow/active/designs/**", Effect: "allow"},
+			permissionRule{Action: "edit", Resource: "docs/artifacts/**", Effect: "allow"},
 			permissionRule{Action: "subagent", Resource: "*", Effect: "deny"},
 			permissionRule{Action: "subagent", Resource: "awm/worker", Effect: "allow"},
 			permissionRule{Action: "shell", Resource: "*", Effect: "deny"},

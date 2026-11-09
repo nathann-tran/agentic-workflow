@@ -106,6 +106,10 @@ func main() {
 		err = runBuilder(args[1:])
 	case "rollback":
 		err = runRollback(args[1:])
+	case "update":
+		err = runUpdate(args[1:])
+	case "uninstall":
+		err = runUninstall(args[1:])
 	case "version", "--version", "-v":
 		fmt.Printf("AWM %s (%s)\n", awm.Version, awm.RuntimePlatform())
 	case "help", "--help", "-h":
@@ -135,6 +139,8 @@ Commands:
   awm builder render                  Create an approved task-scoped Builder profile
   awm builder rollback                Restore a task-scoped Builder profile
   awm rollback                        Restore the previous AWM-managed files
+  awm update                          Re-apply the installed AWM payload
+  awm uninstall                       Remove AWM-managed files
   awm version                         Show version and platform
 
 Install flags:
@@ -145,6 +151,20 @@ Install flags:
   --force                             Replace unmanaged target files after explicit flag
   --dry-run                           Preview writes without changing files
   --home <path>                       Use another home directory for isolated testing
+
+Update flags:
+  --harness <ids>                     Override the previous harness selection
+  --force                             Replace files changed after installation
+  --skip-skills                       Do not update bundled skills
+  --dry-run                           Preview writes and removals
+  --home <path>                       Use another home directory
+
+Uninstall flags:
+  --force                             Remove files changed after installation
+  --remove-cli                        Also remove the awm binary
+  --yes                               Skip confirmation
+  --dry-run                           Preview removals
+  --home <path>                       Use another home directory
 
 Harness IDs: opencode, claude-code, codex-cli, omp
 `, awm.Version)
@@ -322,6 +342,9 @@ func runStatus(args []string) error {
 		return err
 	}
 	fmt.Printf("AWM %s installed at %s\nHarnesses: %s\nManaged files: %d\nBackup: %s\n", state.Version, state.InstalledAt.Format("2006-01-02 15:04:05 MST"), strings.Join(state.Selected, ", "), len(state.ManagedFiles), state.BackupRoot)
+	if state.Version != awm.Version {
+		fmt.Printf("CLI version %s differs from installed config %s. Run `awm update`.\n", awm.Version, state.Version)
+	}
 	return nil
 }
 
@@ -511,6 +534,94 @@ func runRollback(args []string) error {
 	fmt.Printf("Restored: %d\nSkipped: %d\n", len(restored), len(skipped))
 	for _, item := range skipped {
 		fmt.Println("  SKIPPED:", item)
+	}
+	return nil
+}
+
+func runUpdate(args []string) error {
+	flags := flag.NewFlagSet("update", flag.ContinueOnError)
+	harnessArg := flags.String("harness", "", "comma-separated harness IDs")
+	force := flags.Bool("force", false, "replace files changed after installation")
+	dryRun := flags.Bool("dry-run", false, "preview only")
+	skipSkills := flags.Bool("skip-skills", false, "skip bundled skill updates")
+	home := flags.String("home", "", "home override")
+	if err := flags.Parse(args); err != nil {
+		return err
+	}
+	baseHome := homeOr(*home)
+	previous, err := awm.LoadInstallState(baseHome)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return errors.New("AWM is not installed; run `awm install`")
+		}
+		return err
+	}
+	ids := previous.Selected
+	if strings.TrimSpace(*harnessArg) != "" {
+		ids = nil
+		for _, item := range strings.Split(*harnessArg, ",") {
+			id := strings.TrimSpace(item)
+			if id != "" {
+				ids = append(ids, id)
+			}
+		}
+	}
+	if len(ids) == 0 {
+		return errors.New("previous installation has no selected harnesses; pass --harness")
+	}
+	result, err := awm.RunInstall(awm.InstallOptions{
+		HarnessIDs: ids, AllowUndetected: true, Force: *force, Yes: true,
+		DryRun: *dryRun, SkipSkills: *skipSkills, PruneStale: true, Home: *home,
+	}, newConsole())
+	if err != nil {
+		return err
+	}
+	if *dryRun {
+		fmt.Println("\nDry run complete. No files were changed.")
+	} else {
+		fmt.Printf("\nAWM updated: %s -> %s\n", previous.Version, awm.Version)
+	}
+	fmt.Printf("Harnesses: %s\nFiles written or planned: %d\nFiles removed: %d\nFiles skipped: %d\n", strings.Join(result.State.Selected, ", "), len(result.Written), len(result.Removed), len(result.Skipped))
+	if !*dryRun {
+		fmt.Println("The awm CLI binary is unchanged. Re-run the installer to update it.")
+		fmt.Println("Run `awm doctor` to review the installation.")
+	}
+	return nil
+}
+
+func runUninstall(args []string) error {
+	flags := flag.NewFlagSet("uninstall", flag.ContinueOnError)
+	home := flags.String("home", "", "home override")
+	force := flags.Bool("force", false, "remove files changed after installation")
+	dryRun := flags.Bool("dry-run", false, "preview only")
+	removeCLI := flags.Bool("remove-cli", false, "also remove the awm binary")
+	yes := flags.Bool("yes", false, "skip confirmation")
+	if err := flags.Parse(args); err != nil {
+		return err
+	}
+	if !*yes && !*dryRun {
+		prompt := "Remove AWM-managed files and " + filepath.Join(homeOr(*home), ".agentic-workflow") + "?"
+		if !newConsole().Confirm(prompt, false) {
+			return errors.New("uninstall cancelled")
+		}
+	}
+	result, err := awm.Uninstall(awm.UninstallOptions{Home: *home, Force: *force, DryRun: *dryRun, RemoveCLI: *removeCLI})
+	if err != nil {
+		return err
+	}
+	if len(result.Removed) == 0 && len(result.Skipped) == 0 {
+		fmt.Println("AWM is not installed.")
+		return nil
+	}
+	if *dryRun {
+		fmt.Println("\nDry run complete. No files were changed.")
+	}
+	fmt.Printf("Removed: %d\nSkipped: %d\n", len(result.Removed), len(result.Skipped))
+	for _, item := range result.Skipped {
+		fmt.Println("  SKIPPED:", item)
+	}
+	if len(result.Skipped) > 0 {
+		fmt.Println("Some files were skipped. Re-run with --force after reviewing them.")
 	}
 	return nil
 }

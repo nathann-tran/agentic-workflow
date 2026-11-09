@@ -293,7 +293,7 @@
         "architect",
         "conductor"
       ],
-      "activation": "conditional",
+      "activation": "required",
       "source": "global-skill",
       "ref": "",
       "installable": false,

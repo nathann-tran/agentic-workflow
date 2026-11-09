@@ -72,6 +72,10 @@ AWM does not overwrite your existing default-agent setting.
 | Builder | Approved implementation and tests | Only approved scope |
 | Worker | Bounded read-only review or investigation | None |
 
+Design artifacts live under `docs/artifacts/<workflow_id>/design/`.
+The memo stays within 120 lines and 1500 words; the appendix carries detail.
+Every design carries an Archify diagram rendered by Conductor.
+
 The default workflow is Plan → Scout → Architect → Builder.
 Conductor may select a valid entry point.
 Human approval is required before consequential phase transitions.
@@ -91,6 +95,8 @@ awm workspace init --repo . --workspace product-example
 awm builder render --task task.json --harness opencode --human-approved
 awm builder rollback --task-id TASK-001
 awm rollback
+awm update
+awm uninstall
 ```
 
 See `docs/architecture.md` for the Core and adapter design.

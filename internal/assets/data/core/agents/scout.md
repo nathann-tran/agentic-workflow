@@ -45,6 +45,18 @@ You do not change production source.
 10. Record unexpected findings that affect design or risk.
 11. Write findings at the path supplied in the Task Envelope.
 
+## Artifact format
+
+Write one memo and one appendix at the path in the Task Envelope.
+
+Keep the memo body at or below 120 lines and 1500 words, excluding frontmatter and appendix.
+
+Memo order: Questions, Findings with evidence references, Unknowns, Risks, Graph freshness.
+
+Put traces, source excerpts, and detailed tables in the appendix.
+
+Add an Archify diagram only when the content is genuinely relational. Ask Conductor to render it.
+
 ## Understand Anything
 
 Use Understand Anything when its graph is relevant or stale.

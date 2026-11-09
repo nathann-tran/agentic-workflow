@@ -88,7 +88,11 @@ try {
     if (($env:PATH -split ';') -notcontains $DestDir) {
         Write-Host "Add $DestDir to your user PATH."
     }
-    Write-Host 'Run: awm install'
+    if (Test-Path (Join-Path $HOME '.agentic-workflow/state/install.json')) {
+        Write-Host 'Existing AWM installation detected. Run: awm update'
+    } else {
+        Write-Host 'Run: awm install'
+    }
 } finally {
     if ($Temp) { Remove-Item -Recurse -Force $Temp -ErrorAction SilentlyContinue }
 }

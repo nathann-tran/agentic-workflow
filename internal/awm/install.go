@@ -1,6 +1,7 @@
 package awm
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -26,6 +27,7 @@ type SkillSelectionPrompter interface {
 type InstallResult struct {
 	State   InstallState
 	Written []string
+	Removed []string
 	Skipped []string
 }
 
@@ -37,8 +39,13 @@ type installer struct {
 	dryRun        bool
 	prompt        InstallPrompter
 	state         InstallState
-	previousFiles map[string]string
+	previous      InstallState
+	hasPrevious   bool
+	previousFiles map[string]ManagedFile
+	produced      map[string]bool
+	skipSkills    bool
 	written       []string
+	removed       []string
 	skipped       []string
 }
 
@@ -54,17 +61,23 @@ func RunInstall(options InstallOptions, prompt InstallPrompter) (InstallResult, 
 	if err != nil {
 		return InstallResult{}, err
 	}
-	previousFiles := map[string]string{}
+	previousManaged := map[string]ManagedFile{}
+	var previousState InstallState
+	hasPrevious := false
 	if previous, stateErr := LoadInstallState(home); stateErr == nil {
+		previousState = previous
+		hasPrevious = true
 		for _, item := range previous.ManagedFiles {
-			previousFiles[item.Target] = item.InstalledSHA256
+			previousManaged[item.Target] = item
 		}
 	} else if !os.IsNotExist(stateErr) {
 		return InstallResult{}, fmt.Errorf("read previous AWM install state: %w", stateErr)
 	}
 	inst := &installer{
 		home: home, awmHome: awmHome, backupRoot: backupRoot,
-		force: options.Force, dryRun: options.DryRun, prompt: prompt, previousFiles: previousFiles,
+		force: options.Force, dryRun: options.DryRun, prompt: prompt,
+		previous: previousState, hasPrevious: hasPrevious, previousFiles: previousManaged,
+		produced: map[string]bool{}, skipSkills: options.SkipSkills,
 		state: InstallState{
 			Version: Version, InstalledAt: time.Now().UTC(), BackupRoot: backupRoot,
 			InstallSource: "embedded-release",
@@ -89,15 +102,21 @@ func RunInstall(options InstallOptions, prompt InstallPrompter) (InstallResult, 
 			return InstallResult{}, err
 		}
 	}
+	if inst.hasPrevious {
+		inst.carryForwardUnchanged()
+	}
+	if options.PruneStale && inst.hasPrevious {
+		inst.pruneStale()
+	}
 	if options.DryRun {
-		return InstallResult{State: inst.state, Written: inst.written, Skipped: inst.skipped}, nil
+		return InstallResult{State: inst.state, Written: inst.written, Removed: inst.removed, Skipped: inst.skipped}, nil
 	}
 	inst.state.SkippedFiles = append(inst.state.SkippedFiles, inst.skipped...)
 	if err := inst.saveState(); err != nil {
 		inst.rollbackWrittenFiles(false)
 		return InstallResult{}, err
 	}
-	return InstallResult{State: inst.state, Written: inst.written, Skipped: inst.skipped}, nil
+	return InstallResult{State: inst.state, Written: inst.written, Removed: inst.removed, Skipped: inst.skipped}, nil
 }
 
 func selectByIDs(ids []string, home string, allowUndetected bool) ([]DetectedHarness, error) {
@@ -201,7 +220,9 @@ func (i *installer) installSelectedBundledSkills(selected []DetectedHarness, req
 		if item.Version != "" && current.Version != item.Version {
 			candidates = append(candidates, item)
 			candidateReasons[strings.ToLower(item.ID)] = fmt.Sprintf("version %q found; %q required", current.Version, item.Version)
+			continue
 		}
+		i.markProducedSkillFiles(item, roots)
 	}
 	if len(candidates) == 0 {
 		return nil
@@ -270,6 +291,20 @@ func (i *installer) installSelectedBundledSkills(selected []DetectedHarness, req
 	return nil
 }
 
+func (i *installer) markProducedSkillFiles(item BundledSkill, roots []string) {
+	source := filepath.ToSlash(filepath.Join("data", "skills", item.ID))
+	for _, root := range roots {
+		_ = fs.WalkDir(assets.Files, source, func(path string, entry fs.DirEntry, walkErr error) error {
+			if walkErr != nil || entry.IsDir() {
+				return walkErr
+			}
+			rel := strings.TrimPrefix(strings.TrimPrefix(path, source), "/")
+			i.produced[filepath.Join(root, item.ID, filepath.FromSlash(rel))] = true
+			return nil
+		})
+	}
+}
+
 func (i *installer) copyEmbeddedTree(source, target string) error {
 	return fs.WalkDir(assets.Files, source, func(path string, entry fs.DirEntry, walkErr error) error {
 		if walkErr != nil {
@@ -317,10 +352,11 @@ func (i *installer) writeManagedFile(target string, content []byte) error {
 			return readErr
 		}
 		if string(old) == string(content) {
+			i.produced[target] = true
 			return nil
 		}
 		managed := strings.Contains(string(old), "Managed by Agentic Workflow Manager") || strings.Contains(string(old), "AWM:BEGIN -->")
-		if previousHash, ok := i.previousFiles[target]; ok && previousHash == sha256Hex(old) {
+		if previous, ok := i.previousFiles[target]; ok && previous.InstalledSHA256 == sha256Hex(old) {
 			managed = true
 		}
 		if !managed && !i.force {
@@ -334,6 +370,7 @@ func (i *installer) writeManagedFile(target string, content []byte) error {
 		return statErr
 	}
 	if i.dryRun {
+		i.produced[target] = true
 		i.written = append(i.written, target)
 		return nil
 	}
@@ -352,6 +389,11 @@ func (i *installer) writeManagedFile(target string, content []byte) error {
 }
 
 func (i *installer) upsertManagedBlock(target, name string, block []byte) error {
+	absolute, err := filepath.Abs(target)
+	if err != nil {
+		return err
+	}
+	target = absolute
 	if !securePathWithin(i.home, target) {
 		return fmt.Errorf("refusing to read or update a path outside the home directory: %s", target)
 	}
@@ -375,7 +417,16 @@ func (i *installer) upsertManagedBlock(target, name string, block []byte) error 
 			merged = text + "\n\n" + merged
 		}
 	}
-	return i.writeManagedFile(target, []byte(merged+"\n"))
+	if err := i.writeManagedFile(target, []byte(merged+"\n")); err != nil {
+		return err
+	}
+	for index := len(i.state.ManagedFiles) - 1; index >= 0; index-- {
+		if i.state.ManagedFiles[index].Target == target {
+			i.state.ManagedFiles[index].Block = name
+			break
+		}
+	}
+	return nil
 }
 
 func (i *installer) backupExisting(target string) (string, bool, error) {
@@ -419,6 +470,7 @@ func (i *installer) record(target, backup string, existed bool, originalMode os.
 		Target: target, Backup: backup, Existed: existed, OriginalMode: uint32(originalMode.Perm()),
 		InstalledSHA256: hex.EncodeToString(sum[:]),
 	})
+	i.produced[target] = true
 	i.written = append(i.written, target)
 }
 
@@ -540,6 +592,345 @@ func Rollback(home string, force bool) ([]string, []string, error) {
 		}
 	}
 	return restored, skipped, nil
+}
+
+func (i *installer) carryForwardUnchanged() {
+	current := map[string]bool{}
+	for _, item := range i.state.ManagedFiles {
+		current[item.Target] = true
+	}
+	for _, item := range i.previous.ManagedFiles {
+		if current[item.Target] {
+			continue
+		}
+		if !i.skipSkills && !i.produced[item.Target] {
+			continue
+		}
+		content, err := os.ReadFile(item.Target)
+		if err != nil {
+			continue
+		}
+		if sha256Hex(content) != item.InstalledSHA256 {
+			continue
+		}
+		i.state.ManagedFiles = append(i.state.ManagedFiles, item)
+		current[item.Target] = true
+	}
+}
+
+func (i *installer) pruneStale() {
+	current := map[string]bool{}
+	for _, item := range i.state.ManagedFiles {
+		current[item.Target] = true
+	}
+	for index := len(i.previous.ManagedFiles) - 1; index >= 0; index-- {
+		item := i.previous.ManagedFiles[index]
+		if current[item.Target] {
+			continue
+		}
+		i.removeManaged(item)
+	}
+}
+
+func (i *installer) removeManaged(item ManagedFile) {
+	if !securePathWithin(i.home, item.Target) {
+		i.skipped = append(i.skipped, item.Target+" (outside home; blocked)")
+		return
+	}
+	current, err := os.ReadFile(item.Target)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return
+		}
+		i.skipped = append(i.skipped, item.Target+" (cannot read)")
+		return
+	}
+	if item.Block != "" {
+		updated, found := stripManagedBlock(current, item.Block)
+		if !found {
+			return
+		}
+		if i.dryRun {
+			i.removed = append(i.removed, item.Target)
+			return
+		}
+		if len(bytes.TrimSpace(updated)) == 0 {
+			err = os.Remove(item.Target)
+		} else {
+			mode := os.FileMode(item.OriginalMode)
+			if mode == 0 {
+				mode = 0o644
+			}
+			err = atomicWrite(item.Target, updated, mode)
+		}
+		if err != nil {
+			i.skipped = append(i.skipped, item.Target+" (remove failed: "+err.Error()+")")
+			return
+		}
+		i.removed = append(i.removed, item.Target)
+		removeEmptyParents(filepath.Dir(item.Target), i.home)
+		return
+	}
+	if !i.force && sha256Hex(current) != item.InstalledSHA256 {
+		i.skipped = append(i.skipped, item.Target+" (changed after AWM install)")
+		return
+	}
+	if i.dryRun {
+		i.removed = append(i.removed, item.Target)
+		return
+	}
+	if item.Existed {
+		if !securePathWithin(i.home, item.Backup) {
+			i.skipped = append(i.skipped, item.Target+" (backup path outside home; blocked)")
+			return
+		}
+		backup, readErr := os.ReadFile(item.Backup)
+		if readErr != nil {
+			i.skipped = append(i.skipped, item.Target+" (backup missing)")
+			return
+		}
+		mode := os.FileMode(item.OriginalMode)
+		if mode == 0 {
+			mode = 0o644
+		}
+		if err := atomicWrite(item.Target, backup, mode); err != nil {
+			i.skipped = append(i.skipped, item.Target+" (restore failed: "+err.Error()+")")
+			return
+		}
+	} else if err := os.Remove(item.Target); err != nil && !os.IsNotExist(err) {
+		i.skipped = append(i.skipped, item.Target+" (remove failed: "+err.Error()+")")
+		return
+	}
+	i.removed = append(i.removed, item.Target)
+	removeEmptyParents(filepath.Dir(item.Target), i.home)
+}
+
+type UninstallOptions struct {
+	Home      string
+	Force     bool
+	DryRun    bool
+	RemoveCLI bool
+}
+
+type UninstallResult struct {
+	Removed []string
+	Skipped []string
+}
+
+func Uninstall(options UninstallOptions) (UninstallResult, error) {
+	home := options.Home
+	if home == "" {
+		home = HomeDir()
+	}
+	awmHome := filepath.Join(home, ".agentic-workflow")
+	if !securePathWithin(home, awmHome) {
+		return UninstallResult{}, fmt.Errorf("AWM home path is unsafe: %s", awmHome)
+	}
+	var result UninstallResult
+	state, err := LoadInstallState(home)
+	if err != nil {
+		if !os.IsNotExist(err) {
+			return UninstallResult{}, fmt.Errorf("read AWM install state: %w", err)
+		}
+		if _, statErr := os.Stat(awmHome); statErr == nil {
+			if options.DryRun {
+				result.Removed = append(result.Removed, awmHome)
+			} else if removeErr := os.RemoveAll(awmHome); removeErr != nil {
+				return UninstallResult{}, removeErr
+			} else {
+				result.Removed = append(result.Removed, awmHome)
+			}
+		}
+		if options.RemoveCLI {
+			removeCLI(home, options.DryRun, &result)
+		}
+		return result, nil
+	}
+	for index := len(state.ManagedFiles) - 1; index >= 0; index-- {
+		item := state.ManagedFiles[index]
+		if !securePathWithin(home, item.Target) {
+			result.Skipped = append(result.Skipped, item.Target+" (outside home; blocked)")
+			continue
+		}
+		current, readErr := os.ReadFile(item.Target)
+		if readErr != nil {
+			if os.IsNotExist(readErr) {
+				continue
+			}
+			result.Skipped = append(result.Skipped, item.Target+" (cannot read)")
+			continue
+		}
+		if item.Block != "" {
+			updated, found := stripManagedBlock(current, item.Block)
+			if !found {
+				continue
+			}
+			if options.DryRun {
+				result.Removed = append(result.Removed, item.Target)
+				continue
+			}
+			if len(bytes.TrimSpace(updated)) == 0 {
+				if removeErr := os.Remove(item.Target); removeErr != nil {
+					result.Skipped = append(result.Skipped, item.Target+" (remove failed: "+removeErr.Error()+")")
+					continue
+				}
+			} else {
+				mode := os.FileMode(item.OriginalMode)
+				if mode == 0 {
+					mode = 0o644
+				}
+				if writeErr := atomicWrite(item.Target, updated, mode); writeErr != nil {
+					result.Skipped = append(result.Skipped, item.Target+" (write failed: "+writeErr.Error()+")")
+					continue
+				}
+			}
+			result.Removed = append(result.Removed, item.Target)
+			removeEmptyParents(filepath.Dir(item.Target), home)
+			continue
+		}
+		if !options.Force && sha256Hex(current) != item.InstalledSHA256 {
+			result.Skipped = append(result.Skipped, item.Target+" (changed after AWM install)")
+			continue
+		}
+		if options.DryRun {
+			result.Removed = append(result.Removed, item.Target)
+			continue
+		}
+		if item.Existed {
+			if !securePathWithin(home, item.Backup) {
+				result.Skipped = append(result.Skipped, item.Target+" (backup path outside home; blocked)")
+				continue
+			}
+			backup, backupErr := os.ReadFile(item.Backup)
+			if backupErr != nil {
+				result.Skipped = append(result.Skipped, item.Target+" (backup missing)")
+				continue
+			}
+			mode := os.FileMode(item.OriginalMode)
+			if mode == 0 {
+				mode = 0o644
+			}
+			if writeErr := atomicWrite(item.Target, backup, mode); writeErr != nil {
+				result.Skipped = append(result.Skipped, item.Target+" (restore failed: "+writeErr.Error()+")")
+				continue
+			}
+		} else if removeErr := os.Remove(item.Target); removeErr != nil && !os.IsNotExist(removeErr) {
+			result.Skipped = append(result.Skipped, item.Target+" (remove failed: "+removeErr.Error()+")")
+			continue
+		}
+		result.Removed = append(result.Removed, item.Target)
+		removeEmptyParents(filepath.Dir(item.Target), home)
+	}
+	tasksDir := filepath.Join(awmHome, "tasks")
+	if entries, readErr := os.ReadDir(tasksDir); readErr == nil {
+		for _, entry := range entries {
+			if !entry.IsDir() {
+				continue
+			}
+			taskID := entry.Name()
+			statePath := filepath.Join(tasksDir, taskID, "state.json")
+			if _, statErr := os.Stat(statePath); statErr != nil {
+				continue
+			}
+			if options.DryRun {
+				data, readErr := os.ReadFile(statePath)
+				if readErr != nil {
+					result.Skipped = append(result.Skipped, statePath+" (cannot read)")
+					continue
+				}
+				var task builderTaskState
+				if err := json.Unmarshal(data, &task); err != nil {
+					result.Skipped = append(result.Skipped, statePath+" (cannot parse)")
+					continue
+				}
+				for _, file := range task.Files {
+					result.Removed = append(result.Removed, file.Target)
+				}
+				continue
+			}
+			restored, skipped, taskErr := RollbackBuilderTask(home, taskID, options.Force)
+			if taskErr != nil {
+				result.Skipped = append(result.Skipped, statePath+" ("+taskErr.Error()+")")
+				continue
+			}
+			result.Removed = append(result.Removed, restored...)
+			result.Skipped = append(result.Skipped, skipped...)
+		}
+	}
+	if len(result.Skipped) == 0 {
+		if options.DryRun {
+			result.Removed = append(result.Removed, awmHome)
+		} else if removeErr := os.RemoveAll(awmHome); removeErr != nil {
+			result.Skipped = append(result.Skipped, awmHome+" (remove failed: "+removeErr.Error()+")")
+		} else {
+			result.Removed = append(result.Removed, awmHome)
+		}
+	}
+	if options.RemoveCLI {
+		removeCLI(home, options.DryRun, &result)
+	}
+	return result, nil
+}
+
+func removeCLI(home string, dryRun bool, result *UninstallResult) {
+	executable, err := os.Executable()
+	if err != nil {
+		result.Skipped = append(result.Skipped, "awm binary (cannot locate)")
+		return
+	}
+	executable, err = filepath.Abs(executable)
+	if err != nil || !securePathWithin(home, executable) {
+		result.Skipped = append(result.Skipped, executable+" (outside home; kept)")
+		return
+	}
+	base := filepath.Base(executable)
+	if base != "awm" && base != "awm.exe" {
+		result.Skipped = append(result.Skipped, executable+" (not an awm binary; kept)")
+		return
+	}
+	if dryRun {
+		result.Removed = append(result.Removed, executable)
+		return
+	}
+	if err := os.Remove(executable); err != nil {
+		result.Skipped = append(result.Skipped, executable+" (remove after exit: "+err.Error()+")")
+		return
+	}
+	result.Removed = append(result.Removed, executable)
+}
+
+func stripManagedBlock(content []byte, name string) ([]byte, bool) {
+	begin := "<!-- AWM:" + name + ":BEGIN -->"
+	end := "<!-- AWM:" + name + ":END -->"
+	text := string(content)
+	start := strings.Index(text, begin)
+	finish := strings.Index(text, end)
+	if start < 0 || finish < start {
+		return content, false
+	}
+	finish += len(end)
+	remaining := strings.TrimSpace(text[:start] + text[finish:])
+	if remaining == "" {
+		return nil, true
+	}
+	return []byte(remaining + "\n"), true
+}
+
+func removeEmptyParents(dir, stop string) {
+	stopAbs, err := filepath.Abs(stop)
+	if err != nil {
+		return
+	}
+	dirAbs, err := filepath.Abs(dir)
+	if err != nil {
+		return
+	}
+	for dirAbs != stopAbs && pathWithin(stopAbs, dirAbs) {
+		if err := os.Remove(dirAbs); err != nil {
+			return
+		}
+		dirAbs = filepath.Dir(dirAbs)
+	}
 }
 
 func atomicWrite(target string, data []byte, mode os.FileMode) error {

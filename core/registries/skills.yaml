@@ -4,6 +4,9 @@ source_snapshot:
   runtime: "OpenCode 2.2.6"
   captured_at: "2026-11-08"
   basis: "User-provided runtime skill catalog and explicit-load test"
+  status_values:
+    verified_available: "The runtime loaded the skill in a test session."
+    verified_present: "The skill folder exists in every documented skill root; runtime load is not yet tested."
 
 activation_levels:
   - required
@@ -267,12 +270,20 @@ skills:
   - canonical_id: archify
     source: global-skill
     owners: [architect, conductor]
-    activation: conditional
-    trigger: "Create a complex architecture, workflow, sequence, or lifecycle visualization."
+    activation: required
+    trigger: "Every Architect design; Conductor renders the gate HTML."
     opencode:
       runtime_id: archify
       status: verified_available
-    other_harnesses: adapter_mapping_required
+    claude-code:
+      runtime_id: archify
+      status: verified_present
+    codex-cli:
+      runtime_id: archify
+      status: verified_present
+    omp:
+      runtime_id: archify
+      status: verified_present
 
   - canonical_id: markdown_mermaid
     source: global-skill

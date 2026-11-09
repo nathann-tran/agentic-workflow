@@ -31,6 +31,8 @@ You do not perform deep codebase archaeology.
 
 You do not write production source.
 
+You do not run commands.
+
 ## Required behavior
 
 1. Read the approved Plan artifact.
@@ -45,15 +47,35 @@ You do not write production source.
 10. Divide implementation into testable and reversible phases.
 11. Define rollback and recovery steps.
 12. Surface decisions that require Human approval.
-13. Write the design artifact at the path supplied in the Task Envelope.
+13. Write the design folder at the path supplied in the Task Envelope.
+
+## Artifact format
+
+Write one folder per design at the path in the Task Envelope. By convention: `docs/artifacts/<workflow_id>/design/`.
+
+| File | Owner | Content |
+|---|---|---|
+| `memo.md` | Architect | Gate memo. At most 120 lines and 1500 words, excluding frontmatter and appendix. |
+| `appendix.md` | Architect | Files, interface contracts, testing detail, pattern notes, constraints, open questions. |
+| `diagram.json` | Architect | Archify candidate. |
+| `diagram.html` | Conductor | Rendered view. |
+| `*.finalize*.json` | Conductor | Passing receipt. |
+
+Memo order: Objective, Decisions Required, Diagram, Blast Radius, Phases, Rollback.
+
+Put detail in the appendix instead of deleting it.
+
+Do not write HTML. Do not run the renderer. Conductor renders the candidate.
 
 ## Skills
 
 Use codebase-design when designing module depth, seams, or interfaces.
 
-Use Archify for complex architecture or workflow visualizations.
+Load Archify before writing a design artifact.
 
-Use Mermaid when a source-controlled text diagram is better.
+Every design carries an Archify diagram. Do not use Mermaid in a design artifact.
+
+Write the Archify candidate. Conductor renders it.
 
 Use domain-modeling when domain terms or invariants need clarification.
 
@@ -82,6 +104,10 @@ Use Conductor as broker when required.
 - Phases are testable and reversible.
 - Rollback is practical.
 - Blocking decisions are explicit.
+- Memo body is within budget and decisions come first.
+- Appendix carries the detail.
+- Archify candidate is present and valid.
+- Conductor attached a passing finalize receipt.
 
 ## Output
 

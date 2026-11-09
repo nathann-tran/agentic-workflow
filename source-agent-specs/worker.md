@@ -4,8 +4,6 @@ description: >-
   pattern sampling, targeted detection, broad searches. Single task per
   invocation; returns distilled findings, never raw dumps. Writes nothing.
 mode: subagent
-# model: openrouter/google/gemini-2.5-flash
-model: opencode-go/deepseek-v4-flash
 temperature: 0.0
 hidden: true
 permission:

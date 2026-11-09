@@ -194,6 +194,17 @@ func TestRenderAgentCapabilities(t *testing.T) {
 	if !strings.Contains(string(openCodeScout), "action: shell\n    resource: \"*\"\n    effect: ask") {
 		t.Error("OpenCode Scout must request approval for graph and repository commands")
 	}
+	openCodeArchitect, _ := RenderAgent("opencode", "architect", home)
+	if !strings.Contains(string(openCodeArchitect), "action: edit\n    resource: \"docs/artifacts/**\"\n    effect: allow") {
+		t.Error("OpenCode Architect must be allowed to write the design artifact folder")
+	}
+	if !strings.Contains(string(openCodeArchitect), "action: shell\n    resource: \"*\"\n    effect: deny") {
+		t.Error("OpenCode Architect must not run commands")
+	}
+	openCodeConductor, _ := RenderAgent("opencode", "conductor", home)
+	if !strings.Contains(string(openCodeConductor), "action: edit\n    resource: \"docs/artifacts/**\"\n    effect: allow") {
+		t.Error("OpenCode Conductor must be allowed to render design artifacts")
+	}
 	openCodeWorker, _ := RenderAgent("opencode", "worker", home)
 	if !bytes.Contains(openCodeWorker, []byte("effect: deny")) || bytes.Contains(openCodeWorker, []byte("effect: allow\n    resource: \".agentic-workflow/state")) {
 		t.Error("OpenCode Worker must remain read-only")
