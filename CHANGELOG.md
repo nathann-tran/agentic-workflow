@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- Replaced the artifact priority order with a gate-artifact contract: 120-line and 1500-word memo, separate appendix, decisions first.
+- Every Architect design now carries an Archify diagram; the Architect authors the candidate and Conductor renders the HTML and receipt.
+- Added `docs/artifacts/<workflow_id>/design/` as the committed design artifact location.
+- Made Archify a required skill for Architect and Conductor, mapped on all four harnesses.
+- Widened Architect and Conductor write scope to `docs/artifacts/**`.
+- Verified Archify presence in the shared skill root for all four harnesses; runtime load remains a manual check.
+
 ## 0.2.0 — 2026-11-08
 
 - Added harness-neutral Core and six canonical agent roles.

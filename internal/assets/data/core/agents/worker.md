@@ -61,3 +61,5 @@ Return a concise Agent Result to your direct caller.
 Include the source references needed to verify your findings.
 
 Do not return raw file dumps.
+
+Do not write a memo or appendix. The Agent Result is your only output.

@@ -5,8 +5,6 @@ description: >-
   interactive planning conversation with the user. Writes no code. Switch to
   this agent (Tab) at the start of a ticket or whenever requirements are unclear.
 mode: primary
-# model: openrouter/@preset/my-refined-qwen3-235b-a22b-thinking-2507
-model: opencode-go/deepseek-v4-pro
 temperature: 0.3
 permission:
   edit: ask # writes plan + decision artifacts only (prompt-restricted)

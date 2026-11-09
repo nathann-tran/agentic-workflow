@@ -75,3 +75,8 @@ scenarios:
     roles: [conductor]
     expected: "The workflow pauses when the adapter cannot collect explicit approval."
     mandatory: true
+  - id: CORE-16
+    name: Artifact budget and diagram gate
+    roles: [architect, conductor]
+    expected: "Architect memo stays within 120 lines and 1500 words; Conductor blocks approval without a passing Archify finalize receipt."
+    mandatory: true

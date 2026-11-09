@@ -99,6 +99,45 @@ class ClaudeHookTests(unittest.TestCase):
             self.assertEqual(result.returncode, 2)
             self.assertIn("outside repository", result.stderr)
 
+    def test_architect_guard_allows_artifact_folder(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "docs" / "artifacts" / "wf-1" / "design").mkdir(parents=True)
+            payload = {"cwd": str(root), "tool_input": {"file_path": "docs/artifacts/wf-1/design/memo.md"}}
+            result = self.run_hook(
+                "write_scope_guard.py",
+                payload,
+                args=("--role", "architect"),
+                cwd=root,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_conductor_guard_allows_artifact_folder(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "docs" / "artifacts" / "wf-1" / "design").mkdir(parents=True)
+            payload = {"cwd": str(root), "tool_input": {"file_path": "docs/artifacts/wf-1/design/diagram.html"}}
+            result = self.run_hook(
+                "write_scope_guard.py",
+                payload,
+                args=("--role", "conductor"),
+                cwd=root,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_architect_guard_rejects_source_path(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            payload = {"cwd": str(root), "tool_input": {"file_path": "src/main.go"}}
+            result = self.run_hook(
+                "write_scope_guard.py",
+                payload,
+                args=("--role", "architect"),
+                cwd=root,
+            )
+            self.assertEqual(result.returncode, 2)
+            self.assertIn("outside approved output roots", result.stderr)
+
     def test_spawn_guard_allows_only_listed_agents(self):
         allowed = self.run_hook(
             "spawn_guard.py",

@@ -5,8 +5,6 @@ description: >-
   Plan's investigation roadmap. Read-only with respect to source. Spawned by the
   Conductor after Plan; can also be invoked directly with @scout.
 mode: subagent
-# model: openrouter/@preset/my-refined-gemini-2-5-flash
-model: opencode-go/mimo-v2.5
 temperature: 0.1
 permission:
   edit: ask # writes ONLY its own exploration artifact (prompt-restricted)

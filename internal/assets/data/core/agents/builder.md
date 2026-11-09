@@ -63,6 +63,16 @@ Stop if a precondition is missing.
 14. Complete the comment audit.
 15. Write the implementation report at the assigned path.
 
+## Artifact format
+
+Write the implementation report as one memo at the assigned path.
+
+Keep the report at or below 120 lines and 1500 words.
+
+Order: Changed files, Verification commands and results, Deviations, Next actions.
+
+Put detailed logs and diffs in an appendix or link to them.
+
 ## Required engineering skills
 
 Load the canonical TDD capability before implementation.
