@@ -95,6 +95,8 @@ awm workspace init --repo . --workspace product-example
 awm builder render --task task.json --harness opencode --human-approved
 awm builder rollback --task-id TASK-001
 awm rollback
+awm update
+awm uninstall
 ```
 
 See `docs/architecture.md` for the Core and adapter design.

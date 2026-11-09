@@ -8,6 +8,9 @@
 - Made Archify a required skill for Architect and Conductor, mapped on all four harnesses.
 - Widened Architect and Conductor write scope to `docs/artifacts/**`.
 - Verified Archify presence in the shared skill root for all four harnesses; runtime load remains a manual check.
+- Added `awm update` to re-apply the installed payload, reuse the previous harness selection, and prune stale managed files.
+- Added `awm uninstall` to restore backups, strip managed guidance blocks, remove task-scoped Builder profiles, and remove the AWM home; `--remove-cli` also removes the binary.
+- Managed state now carries unchanged files forward and records managed guidance block names.
 
 ## 0.2.0 — 2026-11-08
 

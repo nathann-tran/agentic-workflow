@@ -132,4 +132,8 @@ case ":$PATH:" in
   *":$DEST_DIR:"*) ;;
   *) echo "Add this to your shell profile: export PATH=\"\$HOME/.local/bin:\$PATH\"" ;;
 esac
-echo "Run: awm install"
+if [ -f "$HOME/.agentic-workflow/state/install.json" ]; then
+  echo "Existing AWM installation detected. Run: awm update"
+else
+  echo "Run: awm install"
+fi

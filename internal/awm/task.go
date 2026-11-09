@@ -371,6 +371,7 @@ func rollbackBuilderTaskFiles(home string, files []builderTaskFileState, force b
 			continue
 		}
 		restored = append(restored, item.Target)
+		removeEmptyParents(filepath.Dir(item.Target), home)
 	}
 	return restored, skipped
 }
