@@ -1,6 +1,6 @@
 # Agentic Workflow Manager (AWM)
 
-**Version:** 0.2.0  
+**Version:** 0.3.0  
 **Project:** Harness-agnostic agentic software development workflow
 
 AWM installs one shared Core across four coding harnesses.
@@ -30,8 +30,8 @@ Windows PowerShell:
 irm https://raw.githubusercontent.com/nathann-tran/agentic-workflow/main/installers/install.ps1 | iex
 ```
 
-Pin a release with `curl ... | AWM_VERSION=0.2.0 sh`, or
-`$env:AWM_VERSION='0.2.0'; irm ... | iex` on Windows.
+Pin a release with `curl ... | AWM_VERSION=0.3.0 sh`, or
+`$env:AWM_VERSION='0.3.0'; irm ... | iex` on Windows.
 The installer downloads the archive, verifies `SHA256SUMS.txt`, and places
 `awm` in `~/.local/bin`.
 

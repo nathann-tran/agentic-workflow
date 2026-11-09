@@ -1,4 +1,4 @@
-# Release validation — 0.2.0
+# Release validation — 0.3.0
 
 ## Automated checks
 
@@ -39,6 +39,8 @@ Run these in a temporary HOME before publishing:
 - Create a repository-level `.ai-memory.toml` marker in a Git repository.
 - Render and roll back a task-scoped OpenCode Builder profile.
 - Roll back the full AWM installation.
+- Update an installed copy with `awm update`; verify stale files are removed and unchanged files stay in the state.
+- Uninstall with `awm uninstall`; verify restored backups, stripped guidance blocks, and removed task-scoped Builder profiles.
 - Preview installation with `--dry-run` and verify that no files changed.
 - Install the CLI through the macOS/Linux shell installer.
 - Interactive multi-harness selection installs only the selected adapters.

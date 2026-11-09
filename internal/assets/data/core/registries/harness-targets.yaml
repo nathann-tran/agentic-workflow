@@ -1,5 +1,5 @@
 registry_version: "1.0"
-release_version: "0.2.0"
+release_version: "0.3.0"
 reference_runtime:
   harness_id: opencode
   version_observed: "2.2.6"

@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.3.0 — 2026-11-09
 
 - Replaced the artifact priority order with a gate-artifact contract: 120-line and 1500-word memo, separate appendix, decisions first.
 - Every Architect design now carries an Archify diagram; the Architect authors the candidate and Conductor renders the HTML and receipt.

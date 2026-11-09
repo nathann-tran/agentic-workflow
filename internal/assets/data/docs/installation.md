@@ -20,7 +20,7 @@ The installer detects the OS and architecture, downloads
 `awm_<version>_<os>_<arch>.tar.gz` or `.zip` from the latest release, verifies
 it against `SHA256SUMS.txt`, and places the executable in `~/.local/bin`.
 Add that directory to PATH when your shell does not include it.
-Pin a version with `AWM_VERSION=0.2.0` in the environment.
+Pin a version with `AWM_VERSION=0.3.0` in the environment.
 Set `AWM_REPO` to use a fork.
 
 From a repository checkout, the same script builds from source when Go is

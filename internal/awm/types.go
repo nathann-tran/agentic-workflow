@@ -15,7 +15,7 @@ import (
 	"github.com/agentic-workflow/awm/internal/assets"
 )
 
-var Version = "0.2.0"
+var Version = "0.3.0"
 
 var ErrCancelled = errors.New("operation cancelled")
 
